@@ -13,6 +13,7 @@ import javax.persistence.Embeddable;
 @Builder
 @Embeddable
 public class PersonalInfo {
+
     private String name;
     private String surname;
     private String patronimic;

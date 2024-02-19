@@ -11,24 +11,31 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(exclude = "productProperties")
-@Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class Property {
+@ToString(exclude = "subProductTypes")
+@Entity
+public class ProductType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String name;
-    private String unit;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private ProductType parent;
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "property")
-    private List<ProductProperty> productProperties = new ArrayList<>();
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+    private List<ProductType> subProductTypes = new ArrayList<>();
+
+    public void setParent(ProductType parent) {
+        this.parent = parent;
+        parent.getSubProductTypes().add(this);
+    }
 }

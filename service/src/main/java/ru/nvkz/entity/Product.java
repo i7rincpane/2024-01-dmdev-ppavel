@@ -6,19 +6,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-@ToString
+@ToString(exclude = "productProperties")
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Builder
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,7 +32,11 @@ public class Product {
     private String model;
     private String color;
     private String producer;
-    private Double price;
-    @Column(name = "categories_id")
-    private Integer сategoryId;
+    private BigDecimal price;
+    private Integer count;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private ProductType productType;
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    private List<ProductProperty> productProperties = new ArrayList<>();
 }
