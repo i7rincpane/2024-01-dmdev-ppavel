@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,6 +29,8 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, unique = true)
+    private Integer code;
     private String name;
     private String model;
     private String color;
@@ -37,6 +40,6 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private ProductType productType;
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    @OneToMany(mappedBy = "product")
     private List<ProductProperty> productProperties = new ArrayList<>();
 }

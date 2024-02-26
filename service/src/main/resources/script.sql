@@ -2,7 +2,7 @@ CREATE TABLE product_type
 (
     id        SERIAL PRIMARY KEY,
     parent_id INT REFERENCES product_type (id),
-    name      VARCHAR(255) UNIQUE NOT NULL
+    name      VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE users
@@ -19,20 +19,24 @@ CREATE TABLE users
 CREATE TABLE product
 (
     id              BIGSERIAL PRIMARY KEY,
+    code            INT                              NOT NULL UNIQUE,
     color           VARCHAR(255),
     model           VARCHAR(255),
-    name            VARCHAR(255)                     NOT NULL UNIQUE,
-    price           NUMERIC(19, 2)                   NOT NULL DEFAULT 0.0,
+    name            VARCHAR(255)                     NOT NULL,
+    price           NUMERIC(19, 2)                   NOT NULL,
     producer        VARCHAR(255),
-    count           INT                              NOT NULL DEFAULT 0,
+    count           INT                              NOT NULL,
     product_type_id INT REFERENCES product_type (id) NOT NULL
 );
 
 CREATE TABLE property
 (
-    id   BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    unit VARCHAR(255)
+    id    BIGSERIAL PRIMARY KEY,
+    name  VARCHAR(255) NOT NULL,
+    value VARCHAR(255) NOT NULL,
+    unit  VARCHAR(255),
+    count INTEGER,
+    UNIQUE (name, value)
 );
 
 CREATE TABLE product_property
@@ -40,7 +44,6 @@ CREATE TABLE product_property
     id          BIGSERIAL PRIMARY KEY,
     product_id  BIGINT REFERENCES product (id)  NOT NULL,
     property_id BIGINT REFERENCES property (id) NOT NULL,
-    value       VARCHAR(255),
     UNIQUE (product_id, property_id)
 );
 

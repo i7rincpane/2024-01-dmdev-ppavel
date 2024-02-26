@@ -15,7 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -30,8 +30,8 @@ public class Order {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant  updatedAt;
     private BigDecimal sum;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;

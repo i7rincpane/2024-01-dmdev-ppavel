@@ -33,13 +33,13 @@ class ProductPropertyTestIT extends BaseHibernateCrudTestIT {
         session.save(productType);
         Product product = getProduct("product", productType);
         session.save(product);
-        Property property1 = getProperty("property1");
-        session.save(property1);
+        Property property = getProperty("property");
+        session.save(property);
         Property propertyExpected = getProperty("propertyExpected");
         session.save(propertyExpected);
-        ProductProperty productProperty1 = getProductProperty(product, property1);
+        ProductProperty productProperty = getProductProperty(product, property);
         ProductProperty productPropertyExpected = getProductProperty(product, propertyExpected);
-        session.save(productProperty1);
+        session.save(productProperty);
         session.save(productPropertyExpected);
         session.flush();
         session.clear();
@@ -58,18 +58,22 @@ class ProductPropertyTestIT extends BaseHibernateCrudTestIT {
         session.save(product);
         Property property = getProperty("property");
         session.save(property);
-        ProductProperty productPropertyExpected = getProductProperty(product, property);
-        session.save(productPropertyExpected);
+        Property propertyExpected = getProperty("propertyExpected");
+        propertyExpected.setValue("11");
+        session.save(property);
+        session.save(propertyExpected);
+        ProductProperty productProperty = getProductProperty(product, property);
+        session.save(productProperty);
         session.flush();
         session.clear();
-        productPropertyExpected.setValue("11");
+        productProperty.setProperty(propertyExpected);
 
-        session.update(productPropertyExpected);
+        session.update(productProperty);
         session.flush();
         session.clear();
 
-        ProductProperty productPropertyActual = session.get(ProductProperty.class, productPropertyExpected.getId());
-        assertThat(productPropertyActual.getValue()).isEqualTo(productPropertyExpected.getValue());
+        ProductProperty productPropertyActual = session.get(ProductProperty.class, productProperty.getId());
+        assertThat(productPropertyActual.getProperty().getValue()).isEqualTo(propertyExpected.getValue());
     }
 
     @Test
@@ -93,6 +97,7 @@ class ProductPropertyTestIT extends BaseHibernateCrudTestIT {
 
     private Product getProduct(String name, ProductType productType) {
         return Product.builder()
+                .code(1)
                 .name(name)
                 .color("color")
                 .price(new BigDecimal(1))
@@ -106,6 +111,7 @@ class ProductPropertyTestIT extends BaseHibernateCrudTestIT {
     private Property getProperty(String name) {
         return Property.builder()
                 .name(name)
+                .value("1")
                 .unit("unit")
                 .build();
     }
@@ -120,7 +126,6 @@ class ProductPropertyTestIT extends BaseHibernateCrudTestIT {
         return ProductProperty.builder()
                 .product(product)
                 .property(property)
-                .value("1")
                 .build();
     }
 }

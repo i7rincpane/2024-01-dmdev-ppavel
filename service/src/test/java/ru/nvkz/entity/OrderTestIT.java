@@ -3,13 +3,14 @@ package ru.nvkz.entity;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class OrderTestIT extends BaseHibernateCrudTestIT {
+
     @Test
     @Override
     void create() {
@@ -92,8 +93,8 @@ public class OrderTestIT extends BaseHibernateCrudTestIT {
         return Order.builder()
                 .sum(new BigDecimal(1.1))
                 .user(user)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .orderStatus(OrderStatus.DRAFT)
                 .build();
     }

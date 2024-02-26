@@ -15,7 +15,7 @@ class ProductTestIT extends BaseHibernateCrudTestIT {
     void create() {
         ProductType productType = getProductType("productType");
         session.save(productType);
-        Product productExpected = getProduct("product", productType);
+        Product productExpected = getProduct("product", 1, productType);
 
         session.save(productExpected);
 
@@ -27,8 +27,8 @@ class ProductTestIT extends BaseHibernateCrudTestIT {
     void read() {
         ProductType productType = getProductType("productType");
         session.save(productType);
-        Product product1 = getProduct("product1", productType);
-        Product productExpected = getProduct("productExpected", productType);
+        Product product1 = getProduct("product1",1, productType);
+        Product productExpected = getProduct("productExpected", 2, productType);
         session.save(product1);
         session.save(productExpected);
         session.flush();
@@ -44,7 +44,7 @@ class ProductTestIT extends BaseHibernateCrudTestIT {
     void update() {
         ProductType productType = getProductType("productType");
         session.save(productType);
-        Product productExpected = getProduct("product", productType);
+        Product productExpected = getProduct("product", 1, productType);
         session.save(productExpected);
         session.flush();
         session.clear();
@@ -63,7 +63,7 @@ class ProductTestIT extends BaseHibernateCrudTestIT {
     void delete() {
         ProductType productType = getProductType("productType");
         session.save(productType);
-        Product productExpected = getProduct("productExpected", productType);
+        Product productExpected = getProduct("productExpected", 1, productType);
         session.save(productExpected);
 
         session.delete(productExpected);
@@ -73,8 +73,9 @@ class ProductTestIT extends BaseHibernateCrudTestIT {
         assertNull(ProductActual);
     }
 
-    private Product getProduct(String name, ProductType productType) {
+    private Product getProduct(String name, int code, ProductType productType) {
         return Product.builder()
+                .code(code)
                 .name(name)
                 .color("color")
                 .price(new BigDecimal(1))

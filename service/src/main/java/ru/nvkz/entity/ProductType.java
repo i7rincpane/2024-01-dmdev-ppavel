@@ -31,8 +31,14 @@ public class ProductType {
     @ManyToOne(fetch = FetchType.LAZY)
     private ProductType parent;
     @Builder.Default
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parent")
     private List<ProductType> subProductTypes = new ArrayList<>();
+
+    public ProductType(Integer id, String name, ProductType parent) {
+        this.id = id;
+        this.name = name;
+        this.setParent(parent);
+    }
 
     public void setParent(ProductType parent) {
         this.parent = parent;

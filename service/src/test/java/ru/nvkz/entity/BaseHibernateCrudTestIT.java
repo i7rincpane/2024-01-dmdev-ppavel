@@ -8,11 +8,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import ru.nvkz.util.HibernateTestUtil;
 
-import java.io.Serializable;
-
 public abstract class BaseHibernateCrudTestIT {
 
-    protected static SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory;
     protected Session session;
 
     @BeforeAll
@@ -26,14 +24,6 @@ public abstract class BaseHibernateCrudTestIT {
         session.beginTransaction();
     }
 
-    abstract void create();
-
-    abstract void read();
-
-    abstract void update();
-
-    abstract void delete();
-
     @AfterEach
     void closeSession() {
         session.getTransaction().rollback();
@@ -44,4 +34,12 @@ public abstract class BaseHibernateCrudTestIT {
     static void closeSessionFactory() {
         sessionFactory.close();
     }
+
+    abstract void create();
+
+    abstract void read();
+
+    abstract void update();
+
+    abstract void delete();
 }

@@ -24,13 +24,11 @@ public class ProductProperty {
     private Product product;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Property property;
-    private String value;
 
-    public ProductProperty(Long id, Product product, Property property, String value) {
+    public ProductProperty(Long id, Product product, Property property) {
         this.id = id;
         this.setProduct(product);
         this.setProperty(property);
-        this.value = value;
     }
 
     public void setProduct(Product product) {

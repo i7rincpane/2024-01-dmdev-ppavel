@@ -5,9 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,8 +28,12 @@ public class Property {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String value;
     private String unit;
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "property")
+    private Integer count = 0;
+    @Builder.Default
+    @Fetch(FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "property")
     private List<ProductProperty> productProperties = new ArrayList<>();
 }

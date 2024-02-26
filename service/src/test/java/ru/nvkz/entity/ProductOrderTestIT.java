@@ -3,7 +3,7 @@ package ru.nvkz.entity;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -128,14 +128,15 @@ public class ProductOrderTestIT extends BaseHibernateCrudTestIT {
         return Order.builder()
                 .sum(new BigDecimal(1.1))
                 .user(user)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .orderStatus(OrderStatus.DRAFT)
                 .build();
     }
 
     private Product getProduct(String name, ProductType productType) {
         return Product.builder()
+                .code(1)
                 .name(name)
                 .color("color")
                 .price(new BigDecimal(1))

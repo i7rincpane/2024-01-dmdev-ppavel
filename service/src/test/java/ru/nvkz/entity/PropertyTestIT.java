@@ -11,19 +11,19 @@ class PropertyTestIT extends BaseHibernateCrudTestIT {
     @Test
     @Override
     void create() {
-        Property property1 = getProperty("test-name1");
+        Property property = getProperty("test-name1");
 
-        session.save(property1);
+        session.save(property);
 
-        assertNotNull(property1.getId());
+        assertNotNull(property.getId());
     }
 
     @Test
     @Override
     void read() {
-        Property property1 = getProperty("test-name1");
+        Property property = getProperty("test-name1");
         Property propertyExpected = getProperty("test-name2");
-        session.save(property1);
+        session.save(property);
         session.save(propertyExpected);
         session.flush();
         session.clear();
