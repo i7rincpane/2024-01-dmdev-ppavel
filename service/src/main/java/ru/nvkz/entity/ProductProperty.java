@@ -3,8 +3,10 @@ package ru.nvkz.entity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.nvkz.listener.ProductPropertyListener;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,7 +17,8 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 @Builder
 @Entity
-public class ProductProperty {
+@EntityListeners(ProductPropertyListener.class)
+public class ProductProperty implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

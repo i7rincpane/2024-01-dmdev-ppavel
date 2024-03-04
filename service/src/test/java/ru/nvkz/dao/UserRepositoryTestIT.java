@@ -1,26 +1,38 @@
-package ru.nvkz.entity;
+package ru.nvkz.dao;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.nvkz.entity.PersonalInfo;
+import ru.nvkz.entity.User;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class UserTestIT extends BaseHibernateCrudTestIT {
+public class UserRepositoryTestIT extends RepositoryBaseTestIT<UserRepository> {
+
+    @BeforeEach
+    @Override
+    void initRepository() {
+        repository = new UserRepository(session);
+    }
 
     @Test
     @Override
-    void create() {
+    void save() {
         User user = getUser("test-name1");
 
-        session.save(user);
+        repository.save(user);
 
         assertNotNull(user.getId());
     }
 
     @Test
     @Override
-    void read() {
+    void findById() {
         User user1 = getUser("test-name1");
         User userExpected = getUser("test-name2");
         session.save(user1);
@@ -28,9 +40,9 @@ public class UserTestIT extends BaseHibernateCrudTestIT {
         session.flush();
         session.clear();
 
-        User userActual = session.get(User.class, userExpected.getId());
+        Optional<User> userActual = repository.findById(userExpected.getId());
 
-        assertThat(userActual.getPersonalInfo().getName()).isEqualTo(userExpected.getPersonalInfo().getName());
+        assertThat(userActual.get().getPersonalInfo().getName()).isEqualTo(userExpected.getPersonalInfo().getName());
     }
 
     @Test
@@ -42,7 +54,7 @@ public class UserTestIT extends BaseHibernateCrudTestIT {
         session.clear();
         userExpected.getPersonalInfo().setName("updated");
 
-        session.update(userExpected);
+        repository.update(userExpected);
         session.flush();
         session.clear();
 
@@ -56,11 +68,32 @@ public class UserTestIT extends BaseHibernateCrudTestIT {
         User user = getUser("testname");
         session.save(user);
 
-        session.delete(user);
-        session.flush();
+        repository.delete(user.getId());
 
         User userActual = session.get(User.class, user.getId());
         assertNull(userActual);
+    }
+
+    @Override
+    void findAll() {
+        User user = getUser("test-name1");
+        User user1 = getUser("test-name2");
+        User user2 = getUser("test-name3");
+        session.save(user);
+        session.save(user1);
+        session.save(user2);
+        session.flush();
+        session.clear();
+
+        List<User> userActualBatch = repository.findAll();
+
+        assertThat(userActualBatch).hasSize(3);
+        List<Long> userIdBatch = userActualBatch.stream()
+                .map(User::getId)
+                .toList();
+        assertThat(userIdBatch).contains(user.getId(),
+                user1.getId(),
+                user2.getId());
     }
 
     private User getUser(String name) {

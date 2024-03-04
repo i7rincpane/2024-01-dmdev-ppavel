@@ -10,9 +10,9 @@ import java.util.List;
 @Builder
 public class ProductFilter {
 
-    String color;
-    String producer;
-    BigDecimal price;
     Integer productTypeId;
-    List<Long> productPropertyIdBatch;
+    List<String> producerNames;
+    BigDecimal priceFrom;
+    BigDecimal priceBy;
+    List<Long> propertyIdBatch;
 }

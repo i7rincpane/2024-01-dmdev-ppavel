@@ -23,7 +23,7 @@ import java.time.Instant;
 @Builder
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
     private Instant createdAt;
-    private Instant  updatedAt;
+    private Instant updatedAt;
     private BigDecimal sum;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;

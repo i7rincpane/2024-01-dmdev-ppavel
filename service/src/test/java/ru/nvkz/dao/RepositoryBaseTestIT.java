@@ -1,4 +1,4 @@
-package ru.nvkz.entity;
+package ru.nvkz.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,10 +8,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import ru.nvkz.util.HibernateTestUtil;
 
-public abstract class BaseHibernateCrudTestIT {
+public abstract class RepositoryBaseTestIT<T> {
 
     private static SessionFactory sessionFactory;
     protected Session session;
+    protected T repository;
 
     @BeforeAll
     static void initSessionFactory() {
@@ -35,11 +36,15 @@ public abstract class BaseHibernateCrudTestIT {
         sessionFactory.close();
     }
 
-    abstract void create();
+    abstract void save();
 
-    abstract void read();
+    abstract void delete();
 
     abstract void update();
 
-    abstract void delete();
+    abstract void findById();
+
+    abstract void findAll();
+
+    abstract void initRepository();
 }

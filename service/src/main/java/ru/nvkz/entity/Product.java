@@ -24,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Builder
-public class Product {
+public class Product implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,6 @@ public class Product {
     private Integer code;
     private String name;
     private String model;
-    private String color;
     private String producer;
     private BigDecimal price;
     private Integer count;

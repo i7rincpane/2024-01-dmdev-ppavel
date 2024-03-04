@@ -2,7 +2,7 @@ CREATE TABLE product_type
 (
     id        SERIAL PRIMARY KEY,
     parent_id INT REFERENCES product_type (id),
-    name      VARCHAR(255) NOT NULL
+    name      VARCHAR(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE users
@@ -20,7 +20,6 @@ CREATE TABLE product
 (
     id              BIGSERIAL PRIMARY KEY,
     code            INT                              NOT NULL UNIQUE,
-    color           VARCHAR(255),
     model           VARCHAR(255),
     name            VARCHAR(255)                     NOT NULL,
     price           NUMERIC(19, 2)                   NOT NULL,

@@ -1,19 +1,35 @@
-package ru.nvkz.entity;
+package ru.nvkz.dao;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.nvkz.entity.Order;
+import ru.nvkz.entity.OrderStatus;
+import ru.nvkz.entity.PersonalInfo;
+import ru.nvkz.entity.Product;
+import ru.nvkz.entity.ProductOrder;
+import ru.nvkz.entity.ProductType;
+import ru.nvkz.entity.User;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ProductOrderTestIT extends BaseHibernateCrudTestIT {
+public class ProductOrderRepositoryTestIT extends RepositoryBaseTestIT<ProductOrderRepository> {
+
+    @BeforeEach
+    @Override
+    void initRepository() {
+        repository = new ProductOrderRepository(session);
+    }
 
     @Test
     @Override
-    void create() {
+    void save() {
         ProductType productType = getProductType("productType");
         session.save(productType);
         Product product = getProduct("product", productType);
@@ -24,14 +40,14 @@ public class ProductOrderTestIT extends BaseHibernateCrudTestIT {
         session.save(order);
         ProductOrder productOrder = getProductOrder(product, order);
 
-        session.save(productOrder);
+        repository.save(productOrder);
 
         assertNotNull(productOrder.getId());
     }
 
     @Test
     @Override
-    void read() {
+    void findById() {
         ProductType productType = getProductType("productType");
         session.save(productType);
         Product product = getProduct("product", productType);
@@ -51,9 +67,10 @@ public class ProductOrderTestIT extends BaseHibernateCrudTestIT {
         session.flush();
         session.clear();
 
-        ProductOrder productOrderActual = session.get(ProductOrder.class, productOrderExpected.getId());
+        Optional<ProductOrder> productOrderActual = repository.findById(productOrderExpected.getId());
 
-        assertThat(productOrderActual.getOrder().getUser().getPersonalInfo().getName()).isEqualTo(userExpected.getPersonalInfo().getName());
+        assertThat(productOrderActual).isPresent();
+        assertThat(productOrderActual.get().getOrder().getUser().getPersonalInfo().getName()).isEqualTo(userExpected.getPersonalInfo().getName());
     }
 
     @Test
@@ -73,13 +90,14 @@ public class ProductOrderTestIT extends BaseHibernateCrudTestIT {
         session.clear();
         productOrderExpected.setCount(11);
 
-        session.update(productOrderExpected);
+        repository.update(productOrderExpected);
         session.flush();
         session.clear();
 
         ProductOrder productOrderActual = session.get(ProductOrder.class, productOrderExpected.getId());
         assertThat(productOrderActual.getCount()).isEqualTo(productOrderExpected.getCount());
     }
+
 
     @Test
     @Override
@@ -95,11 +113,45 @@ public class ProductOrderTestIT extends BaseHibernateCrudTestIT {
         ProductOrder productOrder = getProductOrder(product, order);
         session.save(productOrder);
 
-        session.delete(productOrder);
+        repository.delete(productOrder.getId());
         session.flush();
 
         ProductOrder productOrderActual = session.get(ProductOrder.class, productOrder.getId());
         assertNull(productOrderActual);
+    }
+
+    @Override
+    void findAll() {
+        ProductType productType = getProductType("productType");
+        session.save(productType);
+        Product product = getProduct("product", productType);
+        Product product1 = getProduct("product1", productType);
+        Product product2 = getProduct("product2", productType);
+        session.save(product);
+        session.save(product1);
+        session.save(product2);
+        User user = getUser("user");
+        session.save(user);
+        Order order = getOrder(user);
+        session.save(order);
+        ProductOrder productOrder = getProductOrder(product, order);
+        ProductOrder productOrder1 = getProductOrder(product1, order);
+        ProductOrder productOrder2 = getProductOrder(product2, order);
+        session.save(productOrder);
+        session.save(productOrder1);
+        session.save(productOrder2);
+        session.flush();
+        session.clear();
+
+        List<ProductOrder> productOrderActualBatch = repository.findAll();
+
+        assertThat(productOrderActualBatch).hasSize(3);
+        List<Long> productOrderIdActualBatch = productOrderActualBatch.stream()
+                .map(ProductOrder::getId)
+                .toList();
+        assertThat(productOrderIdActualBatch).contains(productOrder.getId(),
+                productOrder1.getId(),
+                productOrder2.getId());
     }
 
     private ProductOrder getProductOrder(Product product, Order order) {
@@ -138,7 +190,6 @@ public class ProductOrderTestIT extends BaseHibernateCrudTestIT {
         return Product.builder()
                 .code(1)
                 .name(name)
-                .color("color")
                 .price(new BigDecimal(1))
                 .model("model")
                 .producer("producer")

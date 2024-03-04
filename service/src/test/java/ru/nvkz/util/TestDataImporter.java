@@ -117,7 +117,6 @@ public class TestDataImporter {
         Product product = Product.builder()
                 .name(String.join(" ", productType.getName(), model, color))
                 .code(code)
-                .color(color)
                 .price(new BigDecimal(price))
                 .model(model)
                 .producer(producer)

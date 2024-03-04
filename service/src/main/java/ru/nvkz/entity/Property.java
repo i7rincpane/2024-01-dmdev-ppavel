@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Property {
+public class Property implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +31,6 @@ public class Property {
     @Builder.Default
     private Integer count = 0;
     @Builder.Default
-    @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "property")
     private List<ProductProperty> productProperties = new ArrayList<>();
 }
