@@ -1,10 +1,12 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.nvkz.entity.Property;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
+@Repository
 public class PropertyRepository extends RepositoryBase<Long, Property> {
 
     public PropertyRepository(EntityManager entityManager) {

@@ -1,6 +1,5 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.ProductType;
 
@@ -11,11 +10,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class ProductTypeRepositoryTestIT extends RepositoryBaseTestIT<ProductTypeRepository> {
+class ProductTypeRepositoryIT extends RepositoryBaseIT<ProductTypeRepository> {
 
-    @BeforeEach
-    void initRepository() {
-        repository = new ProductTypeRepository(session);
+    public ProductTypeRepositoryIT() {
+        super(ProductTypeRepository.class);
     }
 
     @Test
@@ -36,7 +34,7 @@ class ProductTypeRepositoryTestIT extends RepositoryBaseTestIT<ProductTypeReposi
         ProductType productType = getProductType("test-name");
         session.save(productType);
 
-        repository.delete(productType.getId());
+        repository.delete(productType);
 
         ProductType productTypeActual = session.get(ProductType.class, productType.getId());
         assertNull(productTypeActual);

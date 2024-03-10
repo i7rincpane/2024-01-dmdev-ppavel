@@ -1,4 +1,4 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
 import ru.nvkz.entity.BaseEntity;
 
@@ -13,7 +13,7 @@ public interface Repository<K extends Serializable, E extends BaseEntity<K>> {
 
     E save(E entity);
 
-    void delete(K id);
+    void delete(E entity);
 
     void update(E entity);
 

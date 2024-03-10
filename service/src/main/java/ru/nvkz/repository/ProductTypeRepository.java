@@ -1,11 +1,13 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.nvkz.entity.ProductType;
 import ru.nvkz.entity.ProductType_;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
+@Repository
 public class ProductTypeRepository extends RepositoryBase<Integer, ProductType> {
 
     public ProductTypeRepository(EntityManager entityManager) {

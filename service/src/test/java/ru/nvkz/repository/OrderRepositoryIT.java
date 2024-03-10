@@ -1,6 +1,5 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.Order;
 import ru.nvkz.entity.OrderStatus;
@@ -16,12 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class OrderRepositoryTestIT extends RepositoryBaseTestIT<OrderRepository> {
+public class OrderRepositoryIT extends RepositoryBaseIT<OrderRepository> {
 
-    @BeforeEach
-    @Override
-    void initRepository() {
-        repository = new OrderRepository(session);
+
+    public OrderRepositoryIT() {
+        super(OrderRepository.class);
     }
 
     @Test
@@ -108,7 +106,7 @@ public class OrderRepositoryTestIT extends RepositoryBaseTestIT<OrderRepository>
         Order order = getOrder(user);
         session.save(order);
 
-        repository.delete(order.getId());
+        repository.delete(order);
 
         Order orderActual = session.get(Order.class, order.getId());
         assertNull(orderActual);

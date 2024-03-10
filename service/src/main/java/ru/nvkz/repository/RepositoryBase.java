@@ -1,4 +1,4 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +24,15 @@ public abstract class RepositoryBase<K extends Serializable, E extends BaseEntit
     }
 
     @Override
-    public void delete(K id) {
-        entityManager.remove(entityManager.find(clazz, id));
+    public void delete(E entity) {
+        entityManager.remove(entityManager.find(clazz, entity.getId()));
         entityManager.flush();
     }
 
     @Override
     public void update(E entity) {
         entityManager.merge(entity);
+        entityManager.flush();
     }
 
     @Override

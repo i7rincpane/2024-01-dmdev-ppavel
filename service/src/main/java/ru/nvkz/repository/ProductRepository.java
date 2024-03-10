@@ -1,5 +1,6 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
+import org.springframework.stereotype.Repository;
 import ru.nvkz.entity.Product;
 import ru.nvkz.entity.ProductProperty_;
 import ru.nvkz.entity.Product_;
@@ -13,6 +14,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+@Repository
 public class ProductRepository extends RepositoryBase<Long, Product> {
 
     public ProductRepository(EntityManager entityManager) {
@@ -26,12 +28,11 @@ public class ProductRepository extends RepositoryBase<Long, Product> {
         var productType = (Join<Object, Object>) product.fetch(Product_.PRODUCT_TYPE);
         var productProperties = product.join(Product_.PRODUCT_PROPERTIES);
         var properties = productProperties.join(ProductProperty_.PROPERTY);
-        // TODO: что то я тут намудрил.. HELP!
         Predicate[] predicates = CPredicate.builder()
-                .add(productType, productFilter.getProductTypeId(), cb::equal)
+                .add(productFilter.getProductTypeId(), (param) -> cb.equal(productType, param))
                 .add(productFilter.getPropertyIdBatch(), properties::in)
                 .add(productFilter.getProducerNames(), product.get(Product_.PRODUCER)::in)
-                .add(product.get(Product_.PRICE), productFilter.getPriceFrom(), productFilter.getPriceBy(), cb::between)
+                .add(productFilter.getPriceFrom(), productFilter.getPriceBy(), (param1, param2) -> cb.between(product.get(Product_.PRICE), param1, param2))
                 .build();
         criteria.select(product).where(predicates).distinct(true);
         return getEntityManager().createQuery(criteria).getResultList();

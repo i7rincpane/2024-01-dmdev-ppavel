@@ -1,6 +1,5 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.Product;
 import ru.nvkz.entity.ProductProperty;
@@ -15,12 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class PropertyRepositoryTestIT extends RepositoryBaseTestIT<PropertyRepository> {
+class PropertyRepositoryIT extends RepositoryBaseIT<PropertyRepository> {
 
-    @BeforeEach
-    @Override
-    void initRepository() {
-        repository = new PropertyRepository(session);
+    public PropertyRepositoryIT() {
+        super(PropertyRepository.class);
     }
 
     @Test
@@ -72,7 +69,7 @@ class PropertyRepositoryTestIT extends RepositoryBaseTestIT<PropertyRepository> 
         Property property = getProperty("test-name");
         session.save(property);
 
-        repository.delete(property.getId());
+        repository.delete(property);
 
         Property propertyActual = session.get(Property.class, property.getId());
         assertNull(propertyActual);

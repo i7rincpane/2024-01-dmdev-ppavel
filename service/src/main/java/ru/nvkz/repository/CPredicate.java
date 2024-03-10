@@ -1,10 +1,8 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.assertj.core.util.TriFunction;
 
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,9 +19,9 @@ public class CPredicate {
         return new CPredicate();
     }
 
-    public <T> CPredicate add(Path path, T param, BiFunction<Path, T, Predicate> function) {
+    public <T> CPredicate add(T param, Function<T, Predicate> function) {
         if (param != null) {
-            predicates.add(function.apply(path, param));
+            predicates.add(function.apply(param));
         }
         return this;
     }
@@ -35,9 +33,9 @@ public class CPredicate {
         return this;
     }
 
-    public <T> CPredicate add(Path path, T param1, T param2, TriFunction<Path, T, T, Predicate> function) {
+    public <T> CPredicate add( T param1, T param2, BiFunction<T, T, Predicate> function) {
         if (param1 != null && param2 != null) {
-            predicates.add(function.apply(path, param1, param2));
+            predicates.add(function.apply(param1, param2));
         }
         return this;
     }

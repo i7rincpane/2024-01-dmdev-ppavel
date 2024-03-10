@@ -1,7 +1,6 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.Product;
 import ru.nvkz.entity.ProductProperty;
@@ -17,16 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class ProductRepositoryTestIT extends RepositoryBaseTestIT {
+class ProductRepositoryIT extends RepositoryBaseIT<ProductRepository> {
 
-    private ProductRepository repository;
-
-    @BeforeEach
-    @Override
-    void initRepository() {
-        repository = new ProductRepository(session);
+    public ProductRepositoryIT() {
+        super(ProductRepository.class);
     }
 
+    @Test
     @Override
     void save() {
         ProductType productType = getProductType("productType");
@@ -38,6 +34,7 @@ class ProductRepositoryTestIT extends RepositoryBaseTestIT {
         assertNotNull(productExpected.getId());
     }
 
+    @Test
     @Override
     void delete() {
         ProductType productType = getProductType("productType");
@@ -45,12 +42,13 @@ class ProductRepositoryTestIT extends RepositoryBaseTestIT {
         Product productExpected = getProduct("productExpected", 1, productType);
         session.save(productExpected);
 
-        repository.delete(productExpected.getId());
+        repository.delete(productExpected);
 
         Product ProductActual = session.get(Product.class, productExpected.getId());
         assertNull(ProductActual);
     }
 
+    @Test
     @Override
     void update() {
         ProductType productType = getProductType("productType");
@@ -69,6 +67,7 @@ class ProductRepositoryTestIT extends RepositoryBaseTestIT {
         assertThat(ProductActual.getName()).isEqualTo(productExpected.getName());
     }
 
+    @Test
     @Override
     void findById() {
         ProductType productType = getProductType("productType");
@@ -86,6 +85,7 @@ class ProductRepositoryTestIT extends RepositoryBaseTestIT {
         assertThat(productActual.get().getName()).isEqualTo(productExpected.getName());
     }
 
+    @Test
     @Override
     void findAll() {
         ProductType productType = getProductType("productType");

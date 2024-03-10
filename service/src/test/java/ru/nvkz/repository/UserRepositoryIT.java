@@ -1,6 +1,5 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.PersonalInfo;
 import ru.nvkz.entity.User;
@@ -12,12 +11,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class UserRepositoryTestIT extends RepositoryBaseTestIT<UserRepository> {
+public class UserRepositoryIT extends RepositoryBaseIT<UserRepository> {
 
-    @BeforeEach
-    @Override
-    void initRepository() {
-        repository = new UserRepository(session);
+    public UserRepositoryIT() {
+        super(UserRepository.class);
     }
 
     @Test
@@ -68,7 +65,7 @@ public class UserRepositoryTestIT extends RepositoryBaseTestIT<UserRepository> {
         User user = getUser("testname");
         session.save(user);
 
-        repository.delete(user.getId());
+        repository.delete(user);
 
         User userActual = session.get(User.class, user.getId());
         assertNull(userActual);

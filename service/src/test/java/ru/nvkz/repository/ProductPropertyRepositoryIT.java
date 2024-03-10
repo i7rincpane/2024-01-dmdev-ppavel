@@ -1,6 +1,5 @@
-package ru.nvkz.dao;
+package ru.nvkz.repository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.Product;
 import ru.nvkz.entity.ProductProperty;
@@ -15,14 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class ProductPropertyRepositoryTestIT extends RepositoryBaseTestIT {
+class ProductPropertyRepositoryIT extends RepositoryBaseIT<ProductPropertyRepository> {
 
-    private ProductPropertyRepository repository;
-
-    @BeforeEach
-    @Override
-    void initRepository() {
-        repository = new ProductPropertyRepository(session);
+    public ProductPropertyRepositoryIT() {
+        super(ProductPropertyRepository.class);
     }
 
     @Test
@@ -105,7 +100,7 @@ class ProductPropertyRepositoryTestIT extends RepositoryBaseTestIT {
         ProductProperty productProperty = getProductProperty(product, property);
         session.save(productProperty);
 
-        repository.delete(productProperty.getId());
+        repository.delete(productProperty);
         session.flush();
 
         ProductProperty productPropertyActual = session.get(ProductProperty.class, productProperty.getId());
@@ -147,7 +142,7 @@ class ProductPropertyRepositoryTestIT extends RepositoryBaseTestIT {
     }
 
     @Test
-    void checkIncrementPropertyCountPostPersistProductProperty(){
+    void checkIncrementPropertyCountPostPersistProductProperty() {
         ProductType productType = getProductType("productType");
         session.save(productType);
         Product product = getProduct("product", 1, productType);
@@ -156,8 +151,8 @@ class ProductPropertyRepositoryTestIT extends RepositoryBaseTestIT {
         session.save(product1);
         Property property = getProperty("property");
         session.save(property);
-        ProductProperty productProperty= getProductProperty(product, property);
-        ProductProperty productProperty1= getProductProperty(product1, property);
+        ProductProperty productProperty = getProductProperty(product, property);
+        ProductProperty productProperty1 = getProductProperty(product1, property);
 
         repository.save(productProperty);
         repository.save(productProperty1);
@@ -169,7 +164,7 @@ class ProductPropertyRepositoryTestIT extends RepositoryBaseTestIT {
     }
 
     @Test
-    void checkDecrementPropertyCountPostRemoveProductProperty(){
+    void checkDecrementPropertyCountPostRemoveProductProperty() {
         ProductType productType = getProductType("productType");
         session.save(productType);
         Product product = getProduct("product", 1, productType);
@@ -178,12 +173,12 @@ class ProductPropertyRepositoryTestIT extends RepositoryBaseTestIT {
         session.save(product1);
         Property property = getProperty("property");
         session.save(property);
-        ProductProperty productProperty= getProductProperty(product, property);
-        ProductProperty productProperty1= getProductProperty(product1, property);
+        ProductProperty productProperty = getProductProperty(product, property);
+        ProductProperty productProperty1 = getProductProperty(product1, property);
         repository.save(productProperty);
         repository.save(productProperty1);
 
-        repository.delete(productProperty.getId());
+        repository.delete(productProperty);
         session.flush();
 
         Integer propertyCountActual = session.get(Property.class, property.getId()).getCount();
