@@ -1,9 +1,8 @@
 package ru.nvkz.repository;
 
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import ru.nvkz.entity.ProductOrder;
-
-import javax.persistence.EntityManager;
 
 @Repository
 public class ProductOrderRepository extends RepositoryBase<Long, ProductOrder> {

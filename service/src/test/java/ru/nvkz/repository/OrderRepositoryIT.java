@@ -1,5 +1,6 @@
 package ru.nvkz.repository;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.Order;
 import ru.nvkz.entity.OrderStatus;
@@ -15,18 +16,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class OrderRepositoryIT extends RepositoryBaseIT<OrderRepository> {
+@RequiredArgsConstructor
+public class OrderRepositoryIT extends RepositoryBaseIT {
 
-
-    public OrderRepositoryIT() {
-        super(OrderRepository.class);
-    }
+    private final OrderRepository repository;
 
     @Test
     @Override
     void save() {
         User user = getUser("user");
-        session.save(user);
+        entityManager.persist(user);
         Order order = getOrder(user);
 
         repository.save(order);
@@ -38,15 +37,15 @@ public class OrderRepositoryIT extends RepositoryBaseIT<OrderRepository> {
     @Override
     void findById() {
         User user = getUser("user");
-        session.save(user);
+        entityManager.persist(user);
         User userExpected = getUser("userExpected");
-        session.save(userExpected);
+        entityManager.persist(userExpected);
         Order order1 = getOrder(user);
-        session.save(order1);
+        entityManager.persist(order1);
         Order orderExpected = getOrder(userExpected);
-        session.save(orderExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(orderExpected);
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<Order> orderActual = repository.findById(orderExpected.getId());
 
@@ -58,18 +57,18 @@ public class OrderRepositoryIT extends RepositoryBaseIT<OrderRepository> {
     @Override
     void update() {
         User user = getUser("user");
-        session.save(user);
+        entityManager.persist(user);
         Order orderExpected = getOrder(user);
-        session.save(orderExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(orderExpected);
+        entityManager.flush();
+        entityManager.clear();
         orderExpected.setOrderStatus(OrderStatus.COMPLETED);
 
         repository.update(orderExpected);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
-        Order orderActual = session.get(Order.class, orderExpected.getId());
+        Order orderActual = entityManager.find(Order.class, orderExpected.getId());
         assertThat(orderActual.getOrderStatus()).isEqualTo(orderExpected.getOrderStatus());
     }
 
@@ -81,11 +80,11 @@ public class OrderRepositoryIT extends RepositoryBaseIT<OrderRepository> {
         Order order = getOrder(user);
         Order order1 = getOrder(user1);
         Order order2 = getOrder(user2);
-        session.save(order);
-        session.save(order1);
-        session.save(order2);
-        session.flush();
-        session.clear();
+        entityManager.persist(order);
+        entityManager.persist(order1);
+        entityManager.persist(order2);
+        entityManager.flush();
+        entityManager.clear();
 
         List<Order> orderActualBatch = repository.findAll();
 
@@ -102,13 +101,13 @@ public class OrderRepositoryIT extends RepositoryBaseIT<OrderRepository> {
     @Override
     void delete() {
         User user = getUser("user");
-        session.save(user);
+        entityManager.persist(user);
         Order order = getOrder(user);
-        session.save(order);
+        entityManager.persist(order);
 
         repository.delete(order);
 
-        Order orderActual = session.get(Order.class, order.getId());
+        Order orderActual = entityManager.find(Order.class, order.getId());
         assertNull(orderActual);
     }
 

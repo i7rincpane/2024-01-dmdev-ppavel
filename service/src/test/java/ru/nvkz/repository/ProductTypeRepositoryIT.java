@@ -1,5 +1,6 @@
 package ru.nvkz.repository;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.ProductType;
 
@@ -10,11 +11,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class ProductTypeRepositoryIT extends RepositoryBaseIT<ProductTypeRepository> {
+@RequiredArgsConstructor
+class ProductTypeRepositoryIT extends RepositoryBaseIT {
 
-    public ProductTypeRepositoryIT() {
-        super(ProductTypeRepository.class);
-    }
+    private final ProductTypeRepository repository;
 
     @Test
     void save() {
@@ -32,27 +32,27 @@ class ProductTypeRepositoryIT extends RepositoryBaseIT<ProductTypeRepository> {
     @Test
     void delete() {
         ProductType productType = getProductType("test-name");
-        session.save(productType);
+        entityManager.persist(productType);
 
         repository.delete(productType);
 
-        ProductType productTypeActual = session.get(ProductType.class, productType.getId());
+        ProductType productTypeActual = entityManager.find(ProductType.class, productType.getId());
         assertNull(productTypeActual);
     }
 
     @Test
     void update() {
         ProductType productTypeExpected = getProductType("testName");
-        session.save(productTypeExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(productTypeExpected);
+        entityManager.flush();
+        entityManager.clear();
         productTypeExpected.setName("updated");
 
         repository.update(productTypeExpected);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
-        ProductType productTypeActual = session.get(ProductType.class, productTypeExpected.getId());
+        ProductType productTypeActual = entityManager.find(ProductType.class, productTypeExpected.getId());
         assertThat(productTypeActual.getName()).isEqualTo(productTypeExpected.getName());
     }
 
@@ -60,10 +60,10 @@ class ProductTypeRepositoryIT extends RepositoryBaseIT<ProductTypeRepository> {
     void findById() {
         ProductType productType = getProductType("test-name1");
         ProductType productTypeExpected = getProductType("test-name2");
-        session.save(productType);
-        session.save(productTypeExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(productType);
+        entityManager.persist(productTypeExpected);
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<ProductType> productTypeActual = repository.findById(productTypeExpected.getId());
 
@@ -76,11 +76,11 @@ class ProductTypeRepositoryIT extends RepositoryBaseIT<ProductTypeRepository> {
         ProductType productType1 = getProductType("test-name1");
         ProductType productType2 = getProductType("test-name2");
         ProductType productType3 = getProductType("test-name3");
-        session.save(productType1);
-        session.save(productType2);
-        session.save(productType3);
-        session.flush();
-        session.clear();
+        entityManager.persist(productType1);
+        entityManager.persist(productType2);
+        entityManager.persist(productType3);
+        entityManager.flush();
+        entityManager.clear();
 
         List<ProductType> productTypeActualBatch = repository.findAll();
 
@@ -98,11 +98,11 @@ class ProductTypeRepositoryIT extends RepositoryBaseIT<ProductTypeRepository> {
         ProductType productType1 = getProductType("test-name1");
         ProductType productType2 = getProductType("test-name2");
         ProductType productTypeExpected = getProductType("productTypeExpected");
-        session.save(productType1);
-        session.save(productType2);
-        session.save(productTypeExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(productType1);
+        entityManager.persist(productType2);
+        entityManager.persist(productTypeExpected);
+        entityManager.flush();
+        entityManager.clear();
 
         List<ProductType> productTypeActualBatch = repository.findAllByProductTypeName(productTypeExpected.getName());
 

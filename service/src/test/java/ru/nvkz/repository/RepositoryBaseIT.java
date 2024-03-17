@@ -1,39 +1,29 @@
 package ru.nvkz.repository;
 
-import org.hibernate.Session;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ru.nvkz.config.ApplicationTestConfiguration;
+import jakarta.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import ru.nvkz.annotation.IT;
 
+@IT
 public abstract class RepositoryBaseIT<T extends RepositoryBase> {
 
-    private static AnnotationConfigApplicationContext context;
+    @Autowired
+    protected EntityManager entityManager;
 
-    protected final Session session;
-    protected final T repository;
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13");
 
-    public RepositoryBaseIT(Class<T> clazz) {
-        context = new AnnotationConfigApplicationContext(ApplicationTestConfiguration.class);
-        repository = context.getBean(clazz);
-        session = (Session) repository.getEntityManager();
+    static {
+        postgres.start();
     }
 
-    @BeforeEach
-    void beginTransaction() {
-        session.beginTransaction();
-    }
-
-    @AfterEach
-    void closeSession() {
-        session.getTransaction().rollback();
-        session.close();
-    }
-
-    @AfterAll
-    static void closeContext() {
-        context.close();
+    @DynamicPropertySource
+    public static void buildentityManagerFactory(DynamicPropertyRegistry dynamicPropertyRegistry) {
+        dynamicPropertyRegistry.add("spring.datasource.url", postgres::getJdbcUrl);
+        dynamicPropertyRegistry.add("spring.datasource.username", postgres::getUsername);
+        dynamicPropertyRegistry.add("spring.datasource.password", postgres::getPassword);
     }
 
     abstract void save();

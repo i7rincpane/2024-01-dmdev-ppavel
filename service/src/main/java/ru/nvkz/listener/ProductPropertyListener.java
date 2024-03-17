@@ -1,9 +1,8 @@
 package ru.nvkz.listener;
 
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostRemove;
 import ru.nvkz.entity.ProductProperty;
-
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
 
 public class ProductPropertyListener {
 

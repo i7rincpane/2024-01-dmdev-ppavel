@@ -1,5 +1,6 @@
 package ru.nvkz.repository;
 
+import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.Product;
@@ -16,17 +17,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class ProductRepositoryIT extends RepositoryBaseIT<ProductRepository> {
 
-    public ProductRepositoryIT() {
-        super(ProductRepository.class);
-    }
+@RequiredArgsConstructor
+class ProductRepositoryIT extends RepositoryBaseIT {
+
+    private final ProductRepository repository;
 
     @Test
     @Override
     void save() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product productExpected = getProduct("product", 1, productType);
 
         repository.save(productExpected);
@@ -38,13 +39,13 @@ class ProductRepositoryIT extends RepositoryBaseIT<ProductRepository> {
     @Override
     void delete() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product productExpected = getProduct("productExpected", 1, productType);
-        session.save(productExpected);
+        entityManager.persist(productExpected);
 
         repository.delete(productExpected);
 
-        Product ProductActual = session.get(Product.class, productExpected.getId());
+        Product ProductActual = entityManager.find(Product.class, productExpected.getId());
         assertNull(ProductActual);
     }
 
@@ -52,18 +53,18 @@ class ProductRepositoryIT extends RepositoryBaseIT<ProductRepository> {
     @Override
     void update() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product productExpected = getProduct("product", 1, productType);
-        session.save(productExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(productExpected);
+        entityManager.flush();
+        entityManager.clear();
         productExpected.setName("updated");
 
         repository.update(productExpected);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
-        Product ProductActual = session.get(Product.class, productExpected.getId());
+        Product ProductActual = entityManager.find(Product.class, productExpected.getId());
         assertThat(ProductActual.getName()).isEqualTo(productExpected.getName());
     }
 
@@ -71,13 +72,13 @@ class ProductRepositoryIT extends RepositoryBaseIT<ProductRepository> {
     @Override
     void findById() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product1 = getProduct("product1", 1, productType);
         Product productExpected = getProduct("productExpected", 2, productType);
-        session.save(product1);
-        session.save(productExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(product1);
+        entityManager.persist(productExpected);
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<Product> productActual = repository.findById(productExpected.getId());
 
@@ -89,15 +90,15 @@ class ProductRepositoryIT extends RepositoryBaseIT<ProductRepository> {
     @Override
     void findAll() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product1 = getProduct("product1", 1, productType);
         Product product2 = getProduct("product2", 2, productType);
         Product product3 = getProduct("product2", 3, productType);
-        session.save(product1);
-        session.save(product2);
-        session.save(product3);
-        session.flush();
-        session.clear();
+        entityManager.persist(product1);
+        entityManager.persist(product2);
+        entityManager.persist(product3);
+        entityManager.flush();
+        entityManager.clear();
 
         List<Product> productActualBatch = repository.findAll();
 
@@ -113,39 +114,39 @@ class ProductRepositoryIT extends RepositoryBaseIT<ProductRepository> {
     @Test
     void findAllDistinctByProductFilterAllParams() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         ProductType productType1 = getProductType("productType1");
-        session.save(productType1);
+        entityManager.persist(productType1);
         Product product = getProduct("product", 1, productType, "producer1", 5000.0);
         Product product1 = getProduct("product1", 2, productType, "producer1", 6000.);
         Product product2 = getProduct("product2", 3, productType, "producer2", 5555.0);
         Product product3 = getProduct("product3", 4, productType1, "producer3", 3000.0);
         Product product4 = getProduct("product4", 5, productType, "producer1", 10000.0);
-        session.save(product);
-        session.save(product1);
-        session.save(product2);
-        session.save(product3);
-        session.save(product4);
+        entityManager.persist(product);
+        entityManager.persist(product1);
+        entityManager.persist(product2);
+        entityManager.persist(product3);
+        entityManager.persist(product4);
         Property property = getProperty("propertyName", "propertyValue");
         Property property1 = getProperty("propertyName1", "propertyValue1");
         Property property2 = getProperty("propertyName2", "propertyValue2");
-        session.save(property);
-        session.save(property1);
-        session.save(property2);
+        entityManager.persist(property);
+        entityManager.persist(property1);
+        entityManager.persist(property2);
         ProductProperty productProperty = getProductProperty(product, property);
         ProductProperty productProperty1 = getProductProperty(product, property1);
         ProductProperty productProperty2 = getProductProperty(product1, property);
         ProductProperty productProperty4 = getProductProperty(product2, property1);
         ProductProperty productProperty5 = getProductProperty(product3, property2);
         ProductProperty productProperty6 = getProductProperty(product4, property);
-        session.save(productProperty);
-        session.save(productProperty1);
-        session.save(productProperty2);
-        session.save(productProperty4);
-        session.save(productProperty5);
-        session.save(productProperty6);
-        session.flush();
-        session.clear();
+        entityManager.persist(productProperty);
+        entityManager.persist(productProperty1);
+        entityManager.persist(productProperty2);
+        entityManager.persist(productProperty4);
+        entityManager.persist(productProperty5);
+        entityManager.persist(productProperty6);
+        entityManager.flush();
+        entityManager.clear();
         ProductFilter productFilter = ProductFilter.builder()
                 .productTypeId(productType.getId())
                 .producerNames(List.of("producer1"))

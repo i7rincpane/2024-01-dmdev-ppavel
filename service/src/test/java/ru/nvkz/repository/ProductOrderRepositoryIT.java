@@ -1,5 +1,6 @@
 package ru.nvkz.repository;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.Order;
 import ru.nvkz.entity.OrderStatus;
@@ -18,23 +19,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ProductOrderRepositoryIT extends RepositoryBaseIT<ProductOrderRepository> {
+@RequiredArgsConstructor
+public class ProductOrderRepositoryIT extends RepositoryBaseIT {
 
-    public ProductOrderRepositoryIT() {
-        super(ProductOrderRepository.class);
-    }
+    private final ProductOrderRepository repository;
 
     @Test
     @Override
     void save() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", productType);
-        session.save(product);
+        entityManager.persist(product);
         User user = getUser("user1");
-        session.save(user);
+        entityManager.persist(user);
         Order order = getOrder(user);
-        session.save(order);
+        entityManager.persist(order);
         ProductOrder productOrder = getProductOrder(product, order);
 
         repository.save(productOrder);
@@ -46,23 +46,23 @@ public class ProductOrderRepositoryIT extends RepositoryBaseIT<ProductOrderRepos
     @Override
     void findById() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", productType);
-        session.save(product);
+        entityManager.persist(product);
         User user = getUser("user1");
-        session.save(user);
+        entityManager.persist(user);
         Order order = getOrder(user);
-        session.save(order);
+        entityManager.persist(order);
         ProductOrder productOrder = getProductOrder(product, order);
-        session.save(productOrder);
+        entityManager.persist(productOrder);
         User userExpected = getUser("userExpected");
-        session.save(user);
+        entityManager.persist(user);
         Order orderExpected = getOrder(user);
-        session.save(orderExpected);
+        entityManager.persist(orderExpected);
         ProductOrder productOrderExpected = getProductOrder(product, orderExpected);
-        session.save(productOrderExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(productOrderExpected);
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<ProductOrder> productOrderActual = repository.findById(productOrderExpected.getId());
 
@@ -74,24 +74,24 @@ public class ProductOrderRepositoryIT extends RepositoryBaseIT<ProductOrderRepos
     @Override
     void update() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", productType);
-        session.save(product);
+        entityManager.persist(product);
         User user = getUser("user1");
-        session.save(user);
+        entityManager.persist(user);
         Order order = getOrder(user);
-        session.save(order);
+        entityManager.persist(order);
         ProductOrder productOrderExpected = getProductOrder(product, order);
-        session.save(productOrderExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(productOrderExpected);
+        entityManager.flush();
+        entityManager.clear();
         productOrderExpected.setCount(11);
 
         repository.update(productOrderExpected);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
-        ProductOrder productOrderActual = session.get(ProductOrder.class, productOrderExpected.getId());
+        ProductOrder productOrderActual = entityManager.find(ProductOrder.class, productOrderExpected.getId());
         assertThat(productOrderActual.getCount()).isEqualTo(productOrderExpected.getCount());
     }
 
@@ -100,45 +100,45 @@ public class ProductOrderRepositoryIT extends RepositoryBaseIT<ProductOrderRepos
     @Override
     void delete() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", productType);
-        session.save(product);
+        entityManager.persist(product);
         User user = getUser("user1");
-        session.save(user);
+        entityManager.persist(user);
         Order order = getOrder(user);
-        session.save(order);
+        entityManager.persist(order);
         ProductOrder productOrder = getProductOrder(product, order);
-        session.save(productOrder);
+        entityManager.persist(productOrder);
 
         repository.delete(productOrder);
-        session.flush();
+        entityManager.flush();
 
-        ProductOrder productOrderActual = session.get(ProductOrder.class, productOrder.getId());
+        ProductOrder productOrderActual = entityManager.find(ProductOrder.class, productOrder.getId());
         assertNull(productOrderActual);
     }
 
     @Override
     void findAll() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", productType);
         Product product1 = getProduct("product1", productType);
         Product product2 = getProduct("product2", productType);
-        session.save(product);
-        session.save(product1);
-        session.save(product2);
+        entityManager.persist(product);
+        entityManager.persist(product1);
+        entityManager.persist(product2);
         User user = getUser("user");
-        session.save(user);
+        entityManager.persist(user);
         Order order = getOrder(user);
-        session.save(order);
+        entityManager.persist(order);
         ProductOrder productOrder = getProductOrder(product, order);
         ProductOrder productOrder1 = getProductOrder(product1, order);
         ProductOrder productOrder2 = getProductOrder(product2, order);
-        session.save(productOrder);
-        session.save(productOrder1);
-        session.save(productOrder2);
-        session.flush();
-        session.clear();
+        entityManager.persist(productOrder);
+        entityManager.persist(productOrder1);
+        entityManager.persist(productOrder2);
+        entityManager.flush();
+        entityManager.clear();
 
         List<ProductOrder> productOrderActualBatch = repository.findAll();
 

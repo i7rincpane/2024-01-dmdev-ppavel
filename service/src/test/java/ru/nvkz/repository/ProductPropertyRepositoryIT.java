@@ -1,5 +1,6 @@
 package ru.nvkz.repository;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.Product;
 import ru.nvkz.entity.ProductProperty;
@@ -14,21 +15,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class ProductPropertyRepositoryIT extends RepositoryBaseIT<ProductPropertyRepository> {
+@RequiredArgsConstructor
+class ProductPropertyRepositoryIT extends RepositoryBaseIT {
 
-    public ProductPropertyRepositoryIT() {
-        super(ProductPropertyRepository.class);
-    }
+    private final ProductPropertyRepository repository;
 
     @Test
     @Override
     void save() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", 1, productType);
-        session.save(product);
+        entityManager.persist(product);
         Property property = getProperty("property");
-        session.save(property);
+        entityManager.persist(property);
         ProductProperty productPropertyExpected = getProductProperty(product, property);
 
         repository.save(productPropertyExpected);
@@ -40,19 +40,19 @@ class ProductPropertyRepositoryIT extends RepositoryBaseIT<ProductPropertyReposi
     @Override
     void findById() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", 1, productType);
-        session.save(product);
+        entityManager.persist(product);
         Property property = getProperty("property");
-        session.save(property);
+        entityManager.persist(property);
         Property propertyExpected = getProperty("propertyExpected");
-        session.save(propertyExpected);
+        entityManager.persist(propertyExpected);
         ProductProperty productProperty = getProductProperty(product, property);
         ProductProperty productPropertyExpected = getProductProperty(product, propertyExpected);
-        session.save(productProperty);
-        session.save(productPropertyExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(productProperty);
+        entityManager.persist(productPropertyExpected);
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<ProductProperty> productPropertyActual = repository.findById(productPropertyExpected.getId());
 
@@ -64,26 +64,26 @@ class ProductPropertyRepositoryIT extends RepositoryBaseIT<ProductPropertyReposi
     @Override
     void update() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", 1, productType);
-        session.save(product);
+        entityManager.persist(product);
         Property property = getProperty("property");
-        session.save(property);
+        entityManager.persist(property);
         Property propertyExpected = getProperty("propertyExpected");
         propertyExpected.setValue("11");
-        session.save(property);
-        session.save(propertyExpected);
+        entityManager.persist(property);
+        entityManager.persist(propertyExpected);
         ProductProperty productProperty = getProductProperty(product, property);
-        session.save(productProperty);
-        session.flush();
-        session.clear();
+        entityManager.persist(productProperty);
+        entityManager.flush();
+        entityManager.clear();
         productProperty.setProperty(propertyExpected);
 
         repository.update(productProperty);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
-        ProductProperty productPropertyActual = session.get(ProductProperty.class, productProperty.getId());
+        ProductProperty productPropertyActual = entityManager.find(ProductProperty.class, productProperty.getId());
         assertThat(productPropertyActual.getProperty().getValue()).isEqualTo(propertyExpected.getValue());
     }
 
@@ -92,18 +92,18 @@ class ProductPropertyRepositoryIT extends RepositoryBaseIT<ProductPropertyReposi
     @Override
     void delete() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", 1, productType);
-        session.save(product);
+        entityManager.persist(product);
         Property property = getProperty("property");
-        session.save(property);
+        entityManager.persist(property);
         ProductProperty productProperty = getProductProperty(product, property);
-        session.save(productProperty);
+        entityManager.persist(productProperty);
 
         repository.delete(productProperty);
-        session.flush();
+        entityManager.flush();
 
-        ProductProperty productPropertyActual = session.get(ProductProperty.class, productProperty.getId());
+        ProductProperty productPropertyActual = entityManager.find(ProductProperty.class, productProperty.getId());
         assertNull(productPropertyActual);
     }
 
@@ -112,23 +112,23 @@ class ProductPropertyRepositoryIT extends RepositoryBaseIT<ProductPropertyReposi
     @Override
     void findAll() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Property property = getProperty("test-name1");
-        session.save(property);
+        entityManager.persist(property);
         Product product = getProduct("product1", 1, productType);
         Product product1 = getProduct("product2", 2, productType);
         Product product2 = getProduct("product2", 3, productType);
-        session.save(product);
-        session.save(product1);
-        session.save(product2);
+        entityManager.persist(product);
+        entityManager.persist(product1);
+        entityManager.persist(product2);
         ProductProperty productProperty = getProductProperty(product, property);
         ProductProperty productProperty1 = getProductProperty(product1, property);
         ProductProperty productProperty2 = getProductProperty(product2, property);
-        session.save(productProperty);
-        session.save(productProperty1);
-        session.save(productProperty2);
-        session.flush();
-        session.clear();
+        entityManager.persist(productProperty);
+        entityManager.persist(productProperty1);
+        entityManager.persist(productProperty2);
+        entityManager.flush();
+        entityManager.clear();
 
         List<ProductProperty> productPropertyActualBatch = repository.findAll();
 
@@ -144,44 +144,44 @@ class ProductPropertyRepositoryIT extends RepositoryBaseIT<ProductPropertyReposi
     @Test
     void checkIncrementPropertyCountPostPersistProductProperty() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", 1, productType);
         Product product1 = getProduct("product1", 2, productType);
-        session.save(product);
-        session.save(product1);
+        entityManager.persist(product);
+        entityManager.persist(product1);
         Property property = getProperty("property");
-        session.save(property);
+        entityManager.persist(property);
         ProductProperty productProperty = getProductProperty(product, property);
         ProductProperty productProperty1 = getProductProperty(product1, property);
 
         repository.save(productProperty);
         repository.save(productProperty1);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
-        Integer propertyCountActual = session.get(Property.class, property.getId()).getCount();
+        Integer propertyCountActual = entityManager.find(Property.class, property.getId()).getCount();
         assertThat(propertyCountActual).isEqualTo(2);
     }
 
     @Test
     void checkDecrementPropertyCountPostRemoveProductProperty() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         Product product = getProduct("product", 1, productType);
         Product product1 = getProduct("product1", 2, productType);
-        session.save(product);
-        session.save(product1);
+        entityManager.persist(product);
+        entityManager.persist(product1);
         Property property = getProperty("property");
-        session.save(property);
+        entityManager.persist(property);
         ProductProperty productProperty = getProductProperty(product, property);
         ProductProperty productProperty1 = getProductProperty(product1, property);
         repository.save(productProperty);
         repository.save(productProperty1);
 
         repository.delete(productProperty);
-        session.flush();
+        entityManager.flush();
 
-        Integer propertyCountActual = session.get(Property.class, property.getId()).getCount();
+        Integer propertyCountActual = entityManager.find(Property.class, property.getId()).getCount();
         assertThat(propertyCountActual).isEqualTo(1);
     }
 

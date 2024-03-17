@@ -1,10 +1,10 @@
 package ru.nvkz.repository;
 
+import jakarta.persistence.EntityManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.nvkz.entity.BaseEntity;
 
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,7 @@ public abstract class RepositoryBase<K extends Serializable, E extends BaseEntit
 
     @Override
     public void delete(E entity) {
-        entityManager.remove(entityManager.find(clazz, entity.getId()));
+        entityManager.remove(entity);
         entityManager.flush();
     }
 

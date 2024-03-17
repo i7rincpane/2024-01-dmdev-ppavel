@@ -1,9 +1,9 @@
 package ru.nvkz.repository;
 
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import ru.nvkz.entity.Property;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository

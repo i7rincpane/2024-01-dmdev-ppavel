@@ -1,9 +1,8 @@
 package ru.nvkz.repository;
 
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import ru.nvkz.entity.ProductProperty;
-
-import javax.persistence.EntityManager;
 
 @Repository
 public class ProductPropertyRepository extends RepositoryBase<Long, ProductProperty> {

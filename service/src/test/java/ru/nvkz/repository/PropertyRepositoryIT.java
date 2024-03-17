@@ -1,5 +1,6 @@
 package ru.nvkz.repository;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.entity.Product;
 import ru.nvkz.entity.ProductProperty;
@@ -14,11 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class PropertyRepositoryIT extends RepositoryBaseIT<PropertyRepository> {
+@RequiredArgsConstructor
+class PropertyRepositoryIT extends RepositoryBaseIT {
 
-    public PropertyRepositoryIT() {
-        super(PropertyRepository.class);
-    }
+    private final PropertyRepository repository;
 
     @Test
     @Override
@@ -35,10 +35,10 @@ class PropertyRepositoryIT extends RepositoryBaseIT<PropertyRepository> {
     void findById() {
         Property property = getProperty("test-name1");
         Property propertyExpected = getProperty("test-name2");
-        session.save(property);
-        session.save(propertyExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(property);
+        entityManager.persist(propertyExpected);
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<Property> propertyActual = repository.findById(propertyExpected.getId());
 
@@ -50,16 +50,16 @@ class PropertyRepositoryIT extends RepositoryBaseIT<PropertyRepository> {
     @Override
     void update() {
         Property propertyExpected = getProperty("testName");
-        session.save(propertyExpected);
-        session.flush();
-        session.clear();
+        entityManager.persist(propertyExpected);
+        entityManager.flush();
+        entityManager.clear();
         propertyExpected.setName("updated");
 
         repository.update(propertyExpected);
-        session.flush();
-        session.clear();
+        entityManager.flush();
+        entityManager.clear();
 
-        Property propertyActual = session.get(Property.class, propertyExpected.getId());
+        Property propertyActual = entityManager.find(Property.class, propertyExpected.getId());
         assertThat(propertyActual.getName()).isEqualTo(propertyExpected.getName());
     }
 
@@ -67,11 +67,11 @@ class PropertyRepositoryIT extends RepositoryBaseIT<PropertyRepository> {
     @Override
     void delete() {
         Property property = getProperty("test-name");
-        session.save(property);
+        entityManager.persist(property);
 
         repository.delete(property);
 
-        Property propertyActual = session.get(Property.class, property.getId());
+        Property propertyActual = entityManager.find(Property.class, property.getId());
         assertNull(propertyActual);
     }
 
@@ -80,11 +80,11 @@ class PropertyRepositoryIT extends RepositoryBaseIT<PropertyRepository> {
         Property property1 = getProperty("test-name1");
         Property property2 = getProperty("test-name2");
         Property property3 = getProperty("test-name3");
-        session.save(property1);
-        session.save(property2);
-        session.save(property3);
-        session.flush();
-        session.clear();
+        entityManager.persist(property1);
+        entityManager.persist(property2);
+        entityManager.persist(property3);
+        entityManager.flush();
+        entityManager.clear();
 
         List<Property> propertyActualBatch = repository.findAll();
 
@@ -101,39 +101,39 @@ class PropertyRepositoryIT extends RepositoryBaseIT<PropertyRepository> {
     @Test
     void findAllDistinctPropertyByProductTypeId() {
         ProductType productType = getProductType("productType");
-        session.save(productType);
+        entityManager.persist(productType);
         ProductType productType1 = getProductType("productType1");
-        session.save(productType1);
+        entityManager.persist(productType1);
         Product product = getProduct("product", 1, productType, "producer1", 5000.0);
         Product product1 = getProduct("product1", 2, productType, "producer1", 6000.);
         Product product2 = getProduct("product2", 3, productType, "producer2", 5555.0);
         Product product3 = getProduct("product3", 4, productType1, "producer3", 3000.0);
         Product product4 = getProduct("product4", 5, productType, "producer1", 10000.0);
-        session.save(product);
-        session.save(product1);
-        session.save(product2);
-        session.save(product3);
-        session.save(product4);
+        entityManager.persist(product);
+        entityManager.persist(product1);
+        entityManager.persist(product2);
+        entityManager.persist(product3);
+        entityManager.persist(product4);
         Property property = getProperty("propertyName", "propertyValue");
         Property property1 = getProperty("propertyName1", "propertyValue1");
         Property property2 = getProperty("propertyName2", "propertyValue2");
-        session.save(property);
-        session.save(property1);
-        session.save(property2);
+        entityManager.persist(property);
+        entityManager.persist(property1);
+        entityManager.persist(property2);
         ProductProperty productProperty = getProductProperty(product, property);
         ProductProperty productProperty1 = getProductProperty(product, property1);
         ProductProperty productProperty2 = getProductProperty(product1, property);
         ProductProperty productProperty4 = getProductProperty(product2, property1);
         ProductProperty productProperty5 = getProductProperty(product3, property2);
         ProductProperty productProperty6 = getProductProperty(product4, property);
-        session.save(productProperty);
-        session.save(productProperty1);
-        session.save(productProperty2);
-        session.save(productProperty4);
-        session.save(productProperty5);
-        session.save(productProperty6);
-        session.flush();
-        session.clear();
+        entityManager.persist(productProperty);
+        entityManager.persist(productProperty1);
+        entityManager.persist(productProperty2);
+        entityManager.persist(productProperty4);
+        entityManager.persist(productProperty5);
+        entityManager.persist(productProperty6);
+        entityManager.flush();
+        entityManager.clear();
 
         List<Property> propertyActualBatch = repository.findAllDistinctPropertyByProductTypeId(productType.getId());
 

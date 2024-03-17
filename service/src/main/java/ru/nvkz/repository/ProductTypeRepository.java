@@ -1,10 +1,10 @@
 package ru.nvkz.repository;
 
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 import ru.nvkz.entity.ProductType;
 import ru.nvkz.entity.ProductType_;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository
