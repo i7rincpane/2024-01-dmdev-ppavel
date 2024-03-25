@@ -1,13 +1,9 @@
 package ru.nvkz.repository;
 
-import jakarta.persistence.EntityManager;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.nvkz.entity.Order;
 
 @Repository
-public class OrderRepository extends RepositoryBase<Long, Order> {
-
-    public OrderRepository(EntityManager entityManager) {
-        super(Order.class, entityManager);
-    }
+public interface OrderRepository extends JpaRepository<Order, Long> {
 }

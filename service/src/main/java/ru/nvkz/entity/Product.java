@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(exclude = "productProperties")
+@ToString(exclude = {"productPropertyStrings", "productPropertyIntegers"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -31,7 +31,6 @@ public class Product implements BaseEntity<Long> {
     private Long id;
     @Column(nullable = false, unique = true)
     private Integer code;
-    private String name;
     private String model;
     private String producer;
     private BigDecimal price;
@@ -41,4 +40,8 @@ public class Product implements BaseEntity<Long> {
     @Builder.Default
     @OneToMany(mappedBy = "product")
     private List<ProductProperty> productProperties = new ArrayList<>();
+
+    public String getName() {
+        return String.join(" ", productType.getName(), producer, model);
+    }
 }

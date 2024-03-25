@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset dnsshop:1
 CREATE TABLE product_type
 (
     id        SERIAL PRIMARY KEY,
@@ -5,6 +8,7 @@ CREATE TABLE product_type
     name      VARCHAR(255) NOT NULL UNIQUE
 );
 
+--changeset dnsshop:2
 CREATE TABLE users
 (
     id         BIGSERIAL PRIMARY KEY,
@@ -16,28 +20,40 @@ CREATE TABLE users
     telephone  VARCHAR(255)
 );
 
+--changeset dnsshop:3
 CREATE TABLE product
 (
     id              BIGSERIAL PRIMARY KEY,
     code            INT                              NOT NULL UNIQUE,
     model           VARCHAR(255),
-    name            VARCHAR(255)                     NOT NULL,
     price           NUMERIC(19, 2)                   NOT NULL,
     producer        VARCHAR(255),
     count           INT                              NOT NULL,
     product_type_id INT REFERENCES product_type (id) NOT NULL
 );
 
-CREATE TABLE property
+--changeset dnsshop:4
+CREATE TABLE property_info
 (
-    id    BIGSERIAL PRIMARY KEY,
+    id    SERIAL PRIMARY KEY,
     name  VARCHAR(255) NOT NULL,
-    value VARCHAR(255) NOT NULL,
     unit  VARCHAR(255),
-    count INTEGER,
-    UNIQUE (name, value)
+    dtype VARCHAR(31)  not null
 );
 
+--changeset dnsshop:5
+CREATE TABLE property
+(
+    id               BIGSERIAL PRIMARY KEY,
+    property_info_id INT REFERENCES property_info (id) NOT NULL,
+    string_value     VARCHAR(255),
+    integer_value    INT,
+    double_value     NUMERIC(19, 2),
+    date_value       TIMESTAMP,
+    is_value         BOOLEAN
+);
+
+--changeset dnsshop:6
 CREATE TABLE product_property
 (
     id          BIGSERIAL PRIMARY KEY,
@@ -46,6 +62,7 @@ CREATE TABLE product_property
     UNIQUE (product_id, property_id)
 );
 
+--changeset dnsshop:7
 create table orders
 (
     id           BIGSERIAL PRIMARY KEY,
@@ -56,6 +73,7 @@ create table orders
     order_status VARCHAR(128)                 NOT NULL
 );
 
+--changeset dnsshop:8
 create table product_order
 (
     id         BIGSERIAL PRIMARY KEY,
