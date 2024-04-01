@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "subProductTypes")
+@ToString(exclude = {"subProductTypes", "parent"})
 @Entity
 public class ProductType implements BaseEntity<Integer> {
 

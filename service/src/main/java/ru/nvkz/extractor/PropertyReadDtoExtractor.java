@@ -3,6 +3,7 @@ package ru.nvkz.extractor;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import ru.nvkz.dto.PropertyReadDto;
+import ru.nvkz.entity.TypeValue;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +25,7 @@ public class PropertyReadDtoExtractor implements ResultSetExtractor<List<Propert
             resultMap.merge(id, this.createProperty(rs), (oldValue, newValue) -> {
                 String value = newValue.getValues().keySet().stream().findFirst().get();
                 Integer oldCount = oldValue.getValues().getOrDefault(value, 0);
-                oldValue.getValues().put(value, oldCount+1);
+                oldValue.getValues().put(value, oldCount + 1);
                 return oldValue;
             });
         }
@@ -32,8 +33,7 @@ public class PropertyReadDtoExtractor implements ResultSetExtractor<List<Propert
     }
 
     private PropertyReadDto createProperty(ResultSet rs) throws SQLException {
-
-        String propertyInfoId = rs.getString("property_info_id");
+        Integer propertyInfoId = rs.getInt("property_info_id");
         String propertyInfoUnit = rs.getString("property_info_unit");
         String propertyInfoName = rs.getString("property_info_name");
         String propertyInfoDtype = rs.getString("property_info_dtype");
@@ -48,7 +48,7 @@ public class PropertyReadDtoExtractor implements ResultSetExtractor<List<Propert
                 .id(propertyInfoId)
                 .name(propertyInfoName)
                 .unit(propertyInfoUnit)
-                .dtype(propertyInfoDtype)
+                .dtype(TypeValue.valueOf(propertyInfoDtype))
                 .values(values)
                 .build();
     }

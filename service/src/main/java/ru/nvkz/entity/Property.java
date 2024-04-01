@@ -36,7 +36,7 @@ public class Property implements BaseEntity<Long> {
     private Integer integerValue;
     private BigDecimal doubleValue;
     private Instant dateValue;
-    private Boolean isValue;
+    private Boolean booleanValue;
     @Builder.Default
     @OneToMany(mappedBy = "property")
     private List<ProductProperty> productProperties = new ArrayList<>();

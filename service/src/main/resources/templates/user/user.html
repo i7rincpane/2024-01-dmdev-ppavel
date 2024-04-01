@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+<form th:action="@{/users/{userId}/update(userId=${user.id})}" method="post" th:object="${user}">
+    <label for="email">Email:
+        <input id="email" type="text" name="email" th:value="*{email}">
+    </label><br>
+    <label for="birthDate">BirthDate:
+        <input id="birthDate" type="date" name="birthDate" th:value="*{birthDate}">
+    </label><br>
+    <label for="name">Name:
+        <input id="name" type="text" name="name" th:value="*{name}">
+    </label><br>
+    <label for="surname">Surname:
+        <input id="surname" type="text" name="surname" th:value="*{surname}">
+    </label><br>
+    <label for="patronimic">Patronimic:
+        <input id="patronimic" type="text" name="patronimic" th:value="*{patronimic}">
+    </label><br>
+    <label for="telephone">Telephone:
+        <input id="telephone" type="text" name="telephone" th:value="*{telephone}">
+    </label><br>
+    <div th:each="role : ${roles}">
+        <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">
+        <label th:for="${role}" th:text="${role}">Role name</label>
+    </div>
+    <button type="submit">Update</button>
+</form>
+<form th:action="@{/users/{userId}/delete(userId=${user.id})}" th:if="${user.role.name() == 'ADMIN'}" method="post">
+    <button type="submit">Remove</button>
+</form>
+</body>
+</html>

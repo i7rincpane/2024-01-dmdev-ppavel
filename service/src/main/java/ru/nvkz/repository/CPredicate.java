@@ -19,6 +19,13 @@ public class CPredicate {
         return new CPredicate();
     }
 
+    public CPredicate add(String param, Function<String, Predicate> function) {
+        if (param != null && !param.isEmpty()) {
+            predicates.add(function.apply(param));
+        }
+        return this;
+    }
+
     public <T> CPredicate add(T param, Function<T, Predicate> function) {
         if (param != null) {
             predicates.add(function.apply(param));
@@ -33,7 +40,7 @@ public class CPredicate {
         return this;
     }
 
-    public <T> CPredicate add( T param1, T param2, BiFunction<T, T, Predicate> function) {
+    public <T> CPredicate add(T param1, T param2, BiFunction<T, T, Predicate> function) {
         if (param1 != null && param2 != null) {
             predicates.add(function.apply(param1, param2));
         }

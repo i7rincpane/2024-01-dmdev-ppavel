@@ -17,7 +17,9 @@ CREATE TABLE users
     name       VARCHAR(255),
     patronimic VARCHAR(255),
     surname    VARCHAR(255),
-    telephone  VARCHAR(255)
+    role       VARCHAR(32),
+    telephone  VARCHAR(255),
+    birth_date DATE
 );
 
 --changeset dnsshop:3
@@ -50,7 +52,7 @@ CREATE TABLE property
     integer_value    INT,
     double_value     NUMERIC(19, 2),
     date_value       TIMESTAMP,
-    is_value         BOOLEAN
+    boolean_value    BOOLEAN
 );
 
 --changeset dnsshop:6

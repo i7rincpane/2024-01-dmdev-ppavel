@@ -1,4 +1,4 @@
-package ru.nvkz.repository;
+package ru.nvkz;
 
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import ru.nvkz.annotation.IT;
 @Sql({
         "classpath:sql/data.sql"
 })
-public abstract class RepositoryBaseIT {
+public abstract class IntegrationTestBase {
 
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13");
 

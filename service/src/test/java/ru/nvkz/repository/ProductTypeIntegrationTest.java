@@ -2,6 +2,7 @@ package ru.nvkz.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import ru.nvkz.IntegrationTestBase;
 import ru.nvkz.entity.ProductType;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
-class ProductTypeRepositoryIT extends RepositoryBaseIT {
+class ProductTypeIntegrationTest extends IntegrationTestBase {
 
     private final ProductTypeRepository repository;
 

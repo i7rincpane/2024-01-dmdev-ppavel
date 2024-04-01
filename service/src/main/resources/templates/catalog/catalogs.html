@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Catalogs</title>
+    <script type="text/javascript" th:src="@{/js/actions.js}"></script>
+</head>
+<body>
+<span>
+    <a href="/catalogs">Каталог</a>
+</span>
+<span th:each="pathElement : ${pathElements}">
+  <a th:if="pathElement.parentId!=null"
+     th:href="@{'/catalogs/' + ${pathElement.parentId!=null?pathElement.parentId:pathElement.id}}"
+     th:text="|/${pathElement.name}|"></a>
+</span>
+<br>
+<div th:if="${!catalogs.isEmpty()}" th:each="catalog : ${catalogs}">
+    <a th:href="@{'/catalogs/' + ${catalog.id}}" th:text="|${catalog.id}. ${catalog.name}|"></a>
+</div>
+<br>
+<div th:if="${catalogs.isEmpty()}">
+    <div th:each="property : ${propertys}">
+
+        <label th:text="|${property.name} ${property.unit!=null?(property.unit):''}|">Property
+            Name(unit)
+        </label><br><br>
+        <div th:if="${property.dtype.name=='INTEGER'}">
+            <input th:id="|integer_from_${property.id}|" th:name="|integer_from_${property.id}|" type="number">
+            <input th:id="|integer_before_${property.id}|" th:name="|integer_before_${property.id}|" type="number">
+        </div>
+
+        <div th:if="${property.dtype.name=='DOUBLE'}">
+            <input th:id="|double_from_${property.id}|" th:name="|double_from_${property.id}|" type="number"
+                   step="0.01">
+            <input th:id="|double_before_${property.id}|" th:name="|double_before_${property.id}|" type="number"
+                   step="0.01">
+        </div>
+
+        <div th:if="${property.dtype.name=='BOOLEAN'}">
+            <div th:each="value : ${property.values}">
+                <input th:id="|boolean_${value.getKey()}_${property.id}|" type="radio"
+                       th:name="|boolean_${value.getKey()}_${property.id}|" th:value="${value.getKey()}">
+                <label th:for="|boolean_${value.getKey()}_${property.id}|"
+                       th:text="|${value.getKey()=='f'?'нет':'да'} (${value.value})|"></label>
+            </div>
+            </br>
+        </div>
+
+        <div th:if="${property.dtype.name=='STRING'}">
+            <div>
+                <label th:for="|string_${property.id}|">
+                    <select th:id="|string_${property.id}|" th:name="|string_${property.id}|">
+                        <option th:each="value : ${property.values}"
+                                th:text="|${value.getKey()} (${value.getValue()})|"
+                                th:value="${value.getKey()}">
+                        </option>
+                    </select>
+                </label>
+            </div>
+            </br>
+        </div>
+        </br>
+
+    </div>
+</div>
+</body>
+</html>

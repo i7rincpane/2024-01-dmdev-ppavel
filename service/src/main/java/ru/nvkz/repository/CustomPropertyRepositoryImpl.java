@@ -2,7 +2,6 @@ package ru.nvkz.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.stereotype.Repository;
 import ru.nvkz.dto.PropertyReadDto;
 import ru.nvkz.extractor.PropertyReadDtoExtractor;
 
@@ -13,7 +12,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CustomPropertyRepositoryImpl implements CustomPropertyRepository {
 
-    private final NamedParameterJdbcOperations jdbc;
+    private final NamedParameterJdbcOperations jdbcOperations;
     private final PropertyReadDtoExtractor propertyReadDtoExtractor;
 
     @Override
@@ -29,7 +28,7 @@ public class CustomPropertyRepositoryImpl implements CustomPropertyRepository {
                        prop.integer_value as property_integer_value,
                        prop.double_value as property_double_value,
                        prop.date_value as property_date_value,
-                       prop.is_value as property_is_value
+                       prop.boolean_value as property_is_value
                 FROM property prop
                          left join property_info pi on pi.id = prop.property_info_id
                          left join product_property pp on prop.id = pp.property_id
@@ -38,6 +37,6 @@ public class CustomPropertyRepositoryImpl implements CustomPropertyRepository {
                          WHERE pt.id = :productTypeId
                                 """;
 
-        return jdbc.query(resultSql, params, propertyReadDtoExtractor::extractData);
+        return jdbcOperations.query(resultSql, params, propertyReadDtoExtractor::extractData);
     }
 }

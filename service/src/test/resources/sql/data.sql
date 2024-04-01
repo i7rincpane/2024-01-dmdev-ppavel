@@ -16,8 +16,8 @@ VALUES (1, null, 'Бытовая техника'),
        (15, 14, 'Сковорода');
 SELECT SETVAL('product_id_seq', (SELECT MAX(id) FROM product_type));
 
-INSERT INTO users (email, password, name, patronimic, surname, telephone)
-VALUES ('test@mail.ru', '123', 'Иван', 'Иванович', 'Иванов', '89089566776');
+INSERT INTO users (email, password, name, patronimic, surname, telephone, role, birth_date)
+VALUES ('test@mail.ru', '123', 'Иван', 'Иванович', 'Иванов', '89089566776', 'ADMIN', '1990-01-10');
 
 INSERT INTO product (id, code, product_type_id, producer, model, price, count)
 VALUES (1, '1292955', 5, 'DEXP', '4M2CTYL/B', 6499.0, 5),
@@ -38,7 +38,7 @@ VALUES (1, 'Всего конфорок', 'шт', 'INTEGER'),
        (5, 'Таймер конфорок', null, 'STRING'),
        (6, 'Диаметр сковороды', 'см', 'DOUBLE');
 
-INSERT INTO property (id, property_info_id, string_value, integer_value, double_value, date_value, is_value)
+INSERT INTO property (id, property_info_id, string_value, integer_value, double_value, date_value, boolean_value)
 VALUES (1, 1, null, 2, null, null, null),
        (2, 1, null, 4, null, null, null),
        (3, 2, null, null, 56.0, null, null),
@@ -68,9 +68,6 @@ VALUES (1, 1, 1),
        (14, 2, 9),
        (15, 3, 9),
        (16, 8, 10),
-       (17, 9, 11);
-
-
-
-
-
+       (17, 9, 11),
+       (18, 4, 1),
+       (19, 4, 4);

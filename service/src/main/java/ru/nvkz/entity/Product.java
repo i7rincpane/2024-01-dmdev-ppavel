@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(exclude = {"productPropertyStrings", "productPropertyIntegers"})
+@ToString(exclude = {"productProperties"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

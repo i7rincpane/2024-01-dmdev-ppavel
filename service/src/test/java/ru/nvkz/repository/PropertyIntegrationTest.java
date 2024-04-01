@@ -2,6 +2,7 @@ package ru.nvkz.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import ru.nvkz.IntegrationTestBase;
 import ru.nvkz.dto.PropertyReadDto;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
-class PropertyRepositoryIT extends RepositoryBaseIT {
+class PropertyIntegrationTest extends IntegrationTestBase {
 
     private static final Integer ELECTRIC_HOB_TYPE_ID = 5;
 

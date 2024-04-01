@@ -21,11 +21,11 @@ public class ProductProperty implements BaseEntity<Long> {
     @Id
     @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    protected Product product;
+    private Product product;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    protected Property property;
+    private Property property;
 
     @Builder
     public ProductProperty(Long id, Product product, Property property) {

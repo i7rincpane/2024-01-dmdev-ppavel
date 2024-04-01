@@ -2,6 +2,7 @@ package ru.nvkz.dto;
 
 import lombok.Builder;
 import lombok.Value;
+import ru.nvkz.entity.TypeValue;
 
 import java.util.Map;
 
@@ -9,9 +10,9 @@ import java.util.Map;
 @Value
 public class PropertyReadDto {
 
-    private String id;
-    private String name;
-    private String unit;
-    private String dtype;
-    private Map<String, Integer> values;
+     Integer id;
+     String name;
+     String unit;
+     TypeValue dtype;
+     Map<String, Integer> values;
 }
