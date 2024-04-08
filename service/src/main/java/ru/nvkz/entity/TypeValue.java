@@ -2,8 +2,8 @@ package ru.nvkz.entity;
 
 public enum TypeValue {
 
-    INTEGER,
-    STRING,
-    DOUBLE,
+    NUMBER,
+    TEXT,
+    FLOAT,
     BOOLEAN
 }

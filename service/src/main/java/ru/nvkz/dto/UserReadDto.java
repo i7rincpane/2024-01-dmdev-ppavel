@@ -2,6 +2,7 @@ package ru.nvkz.dto;
 
 import lombok.Value;
 import ru.nvkz.entity.Role;
+
 import java.time.LocalDate;
 
 @Value

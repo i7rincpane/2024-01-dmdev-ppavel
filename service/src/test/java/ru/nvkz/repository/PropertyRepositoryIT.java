@@ -10,7 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
-class PropertyIntegrationTest extends IntegrationTestBase {
+class PropertyRepositoryIT extends IntegrationTestBase {
 
     private static final Integer ELECTRIC_HOB_TYPE_ID = 5;
 
@@ -20,10 +20,10 @@ class PropertyIntegrationTest extends IntegrationTestBase {
     void findAllDistinctPropertyByProductTypeId() {
         String[] expectedPropertyNames = {"Таймер конфорок", "Основной материал изготовления панели", "Всего конфорок", "Ширина", "Рамка"};
 
-        List<PropertyReadDto> propertys = repository.findAllWithCountProductPropertyValue(ELECTRIC_HOB_TYPE_ID);
+        List<PropertyReadDto> properties = repository.findAllWithCountProductPropertyValue(ELECTRIC_HOB_TYPE_ID);
 
-        assertThat(propertys).hasSize(5);
-        List<String> propertyNameBatch = propertys.stream()
+        assertThat(properties).hasSize(5);
+        List<String> propertyNameBatch = properties.stream()
                 .map(PropertyReadDto::getName)
                 .toList();
         assertThat(propertyNameBatch).contains(expectedPropertyNames);

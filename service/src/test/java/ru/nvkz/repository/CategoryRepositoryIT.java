@@ -3,23 +3,23 @@ package ru.nvkz.repository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.IntegrationTestBase;
-import ru.nvkz.entity.ProductType;
+import ru.nvkz.entity.Category;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
-class ProductTypeIntegrationTest extends IntegrationTestBase {
+class CategoryRepositoryIT extends IntegrationTestBase {
 
-    private final ProductTypeRepository repository;
+    private final CategoryRepository repository;
 
     @Test
     void findAllProductTypeByProductTypeName() {
         String electricHobTypeNameExpected = "Электрическая варочная поверхность";
-        List<ProductType> productTypeActualBatch = repository.findAllByName(electricHobTypeNameExpected);
+        List<Category> categoryActualBatch = repository.findAllByName(electricHobTypeNameExpected);
 
-        assertThat(productTypeActualBatch).hasSize(1);
-        assertThat(productTypeActualBatch.get(0).getName()).contains(electricHobTypeNameExpected);
+        assertThat(categoryActualBatch).hasSize(1);
+        assertThat(categoryActualBatch.get(0).getName()).contains(electricHobTypeNameExpected);
     }
 }

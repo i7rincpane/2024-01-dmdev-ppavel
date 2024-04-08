@@ -15,7 +15,7 @@ public class PropertyService {
 
     private final PropertyRepository propertyRepository;
 
-    public List<PropertyReadDto> findAllWithCountProductPropertyValue(Integer productTypeId) {
-        return propertyRepository.findAllWithCountProductPropertyValue(productTypeId);
+    public List<PropertyReadDto> findAllWithCountProductPropertyValue(Integer categoryId) {
+        return propertyRepository.findAllWithCountProductPropertyValue(categoryId);
     }
 }

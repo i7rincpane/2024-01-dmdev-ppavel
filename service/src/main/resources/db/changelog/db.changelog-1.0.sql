@@ -1,14 +1,21 @@
 --liquibase formatted sql
 
 --changeset dnsshop:1
-CREATE TABLE product_type
+CREATE TABLE producer
 (
-    id        SERIAL PRIMARY KEY,
-    parent_id INT REFERENCES product_type (id),
-    name      VARCHAR(255) NOT NULL UNIQUE
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE
 );
 
 --changeset dnsshop:2
+CREATE TABLE category
+(
+    id        SERIAL PRIMARY KEY,
+    parent_id INT REFERENCES category (id),
+    name      VARCHAR(255) NOT NULL UNIQUE
+);
+
+--changeset dnsshop:3
 CREATE TABLE users
 (
     id         BIGSERIAL PRIMARY KEY,
@@ -22,49 +29,50 @@ CREATE TABLE users
     birth_date DATE
 );
 
---changeset dnsshop:3
+--changeset dnsshop:4
 CREATE TABLE product
 (
-    id              BIGSERIAL PRIMARY KEY,
-    code            INT                              NOT NULL UNIQUE,
-    model           VARCHAR(255),
-    price           NUMERIC(19, 2)                   NOT NULL,
-    producer        VARCHAR(255),
-    count           INT                              NOT NULL,
-    product_type_id INT REFERENCES product_type (id) NOT NULL
-);
-
---changeset dnsshop:4
-CREATE TABLE property_info
-(
-    id    SERIAL PRIMARY KEY,
-    name  VARCHAR(255) NOT NULL,
-    unit  VARCHAR(255),
-    dtype VARCHAR(31)  not null
+    id          BIGSERIAL PRIMARY KEY,
+    code        INT                          NOT NULL UNIQUE,
+    model       VARCHAR(255),
+    price       NUMERIC(19, 2)               NOT NULL,
+    producer_id INT REFERENCES producer (id) NOT NULL,
+    count       INT                          NOT NULL,
+    category_id INT REFERENCES category (id) NOT NULL
 );
 
 --changeset dnsshop:5
 CREATE TABLE property
 (
-    id               BIGSERIAL PRIMARY KEY,
-    property_info_id INT REFERENCES property_info (id) NOT NULL,
-    string_value     VARCHAR(255),
-    integer_value    INT,
-    double_value     NUMERIC(19, 2),
-    date_value       TIMESTAMP,
-    boolean_value    BOOLEAN
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(255)                 NOT NULL,
+    category_id INT REFERENCES category (id) NOT NULL,
+    unit        VARCHAR(255),
+    dtype       VARCHAR(31)                  NOT NULL
 );
 
 --changeset dnsshop:6
-CREATE TABLE product_property
+CREATE TABLE property_value
 (
-    id          BIGSERIAL PRIMARY KEY,
-    product_id  BIGINT REFERENCES product (id)  NOT NULL,
-    property_id BIGINT REFERENCES property (id) NOT NULL,
-    UNIQUE (product_id, property_id)
+    id            BIGSERIAL PRIMARY KEY,
+    property_id   INT REFERENCES property (id) NOT NULL,
+    text_value    VARCHAR(255),
+    number_value  INT,
+    float_value   NUMERIC(19, 2),
+    date_value    TIMESTAMP,
+    boolean_value BOOLEAN
 );
 
 --changeset dnsshop:7
+CREATE TABLE product_property_value
+(
+    id                BIGSERIAL PRIMARY KEY,
+    product_id        BIGINT REFERENCES product (id)        NOT NULL,
+    property_value_id BIGINT REFERENCES property_value (id) NOT NULL,
+    UNIQUE (product_id, property_value_id)
+);
+
+--changeset dnsshop:8
 create table orders
 (
     id           BIGSERIAL PRIMARY KEY,
@@ -75,7 +83,7 @@ create table orders
     order_status VARCHAR(128)                 NOT NULL
 );
 
---changeset dnsshop:8
+--changeset dnsshop:9
 create table product_order
 (
     id         BIGSERIAL PRIMARY KEY,

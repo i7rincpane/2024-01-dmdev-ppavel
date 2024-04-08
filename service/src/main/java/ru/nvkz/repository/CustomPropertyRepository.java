@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface CustomPropertyRepository {
 
-    List<PropertyReadDto> findAllWithCountProductPropertyValue(Integer productTypeId);
+    List<PropertyReadDto> findAllWithCountProductPropertyValue(Integer categoryId);
 
 }

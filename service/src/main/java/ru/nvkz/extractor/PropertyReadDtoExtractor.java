@@ -3,6 +3,7 @@ package ru.nvkz.extractor;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import ru.nvkz.dto.PropertyReadDto;
+import ru.nvkz.dto.PropertyValueReadDto;
 import ru.nvkz.entity.TypeValue;
 
 import java.sql.ResultSet;
@@ -21,11 +22,11 @@ public class PropertyReadDtoExtractor implements ResultSetExtractor<List<Propert
     public List<PropertyReadDto> extractData(ResultSet rs) throws SQLException {
         Map<Long, PropertyReadDto> resultMap = new HashMap<>();
         while (rs.next()) {
-            Long id = rs.getLong("property_info_id");
+            Long id = rs.getLong("property_id");
             resultMap.merge(id, this.createProperty(rs), (oldValue, newValue) -> {
-                String value = newValue.getValues().keySet().stream().findFirst().get();
-                Integer oldCount = oldValue.getValues().getOrDefault(value, 0);
-                oldValue.getValues().put(value, oldCount + 1);
+                PropertyValueReadDto value = newValue.getPropertyValueProductCounts().keySet().stream().findFirst().get();
+                Integer oldCount = oldValue.getPropertyValueProductCounts().getOrDefault(value, 0);
+                oldValue.getPropertyValueProductCounts().put(value, oldCount + 1);
                 return oldValue;
             });
         }
@@ -33,23 +34,24 @@ public class PropertyReadDtoExtractor implements ResultSetExtractor<List<Propert
     }
 
     private PropertyReadDto createProperty(ResultSet rs) throws SQLException {
-        Integer propertyInfoId = rs.getInt("property_info_id");
-        String propertyInfoUnit = rs.getString("property_info_unit");
-        String propertyInfoName = rs.getString("property_info_name");
-        String propertyInfoDtype = rs.getString("property_info_dtype");
-        String propertyValue = getValue(rs.getString("property_string_value"),
-                rs.getString("property_integer_value"),
-                rs.getString("property_double_value"),
-                rs.getString("property_date_value"),
-                rs.getString("property_is_value"));
-        Map<String, Integer> values = new HashMap<>();
-        values.put(propertyValue, 1);
+        Integer propertyInfoId = rs.getInt("property_id");
+        String propertyInfoUnit = rs.getString("property_unit");
+        String propertyInfoName = rs.getString("property_name");
+        String propertyInfoDtype = rs.getString("property_dtype");
+        Long propertyValueId = rs.getLong("property_value_id");
+        String propertyValue = getValue(rs.getString("property_value_text"),
+                rs.getString("property_value_number"),
+                rs.getString("property_value_float"),
+                rs.getString("property_value_date"),
+                rs.getString("property_value_boolean"));
+        Map<PropertyValueReadDto, Integer> propertyValueWithCountProductMap = new HashMap<>();
+        propertyValueWithCountProductMap.put(new PropertyValueReadDto(propertyValueId, propertyValue), 1);
         return PropertyReadDto.builder()
                 .id(propertyInfoId)
                 .name(propertyInfoName)
                 .unit(propertyInfoUnit)
                 .dtype(TypeValue.valueOf(propertyInfoDtype))
-                .values(values)
+                .propertyValueProductCounts(propertyValueWithCountProductMap)
                 .build();
     }
 

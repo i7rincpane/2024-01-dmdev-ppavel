@@ -32,16 +32,17 @@ public class Product implements BaseEntity<Long> {
     @Column(nullable = false, unique = true)
     private Integer code;
     private String model;
-    private String producer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Producer producer;
     private BigDecimal price;
     private Integer count;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private ProductType productType;
+    private Category category;
     @Builder.Default
     @OneToMany(mappedBy = "product")
-    private List<ProductProperty> productProperties = new ArrayList<>();
+    private List<ProductPropertyValue> productPropertyValues = new ArrayList<>();
 
     public String getName() {
-        return String.join(" ", productType.getName(), producer, model);
+        return String.join(" ", category.getName(), producer.getName(), model);
     }
 }

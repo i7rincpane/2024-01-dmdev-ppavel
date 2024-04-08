@@ -1,6 +1,6 @@
 package ru.nvkz.dto;
 
-public interface ProductTypePathElement {
+public interface CategoryPathElement {
 
     Integer getId();
 

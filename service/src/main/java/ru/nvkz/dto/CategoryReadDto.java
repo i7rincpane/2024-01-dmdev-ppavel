@@ -3,11 +3,11 @@ package ru.nvkz.dto;
 import lombok.Builder;
 import lombok.Value;
 
-@Value
 @Builder
-public class ProductTypeReadDto {
+@Value
+public class CategoryReadDto {
 
     Integer id;
     String name;
-    ProductTypeReadDto parentDto;
+    CategoryReadDto parent;
 }

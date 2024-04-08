@@ -5,7 +5,7 @@
     <title>Users</title>
 </head>
 <body>
-<form action="/users">
+<form action="/users" th:object="${filter}">
     <label for="name">Firstname:
         <input id="name" type="text" name="name" th:value="${filter.name}">
     </label>
@@ -15,6 +15,14 @@
     <label for="birthDate">Birthdate:
         <input id="birthDate" type="date" name="birthDate" th:value="${filter.birthDate}">
     </label>
+    <ul>
+        <li th:each="role : ${roles}">
+            <input type="checkbox" th:field="*{roles}" th:value="${role}"/>
+            <label th:for="${#ids.prev('roles')}"
+                   th:text="${role}">Heating</label>
+        </li>
+    </ul>
+
     <div>
         <label for="page">Page:
             <input id="page" type="number" name="page" th:value="${users.metadata.page}">
@@ -30,3 +38,4 @@
 </div>
 </body>
 </html>
+

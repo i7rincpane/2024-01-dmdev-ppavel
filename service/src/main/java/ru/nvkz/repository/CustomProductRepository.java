@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CustomProductRepository {
 
-    List<Product> findAllDistinctByProductFilter(ProductFilter productFilter);
+    List<Product> findAllDistinctByProductFilter(ProductFilter productFilter, Integer categoryId);
 }

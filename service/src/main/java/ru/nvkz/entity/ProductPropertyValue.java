@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @Entity
-public class ProductProperty implements BaseEntity<Long> {
+public class ProductPropertyValue implements BaseEntity<Long> {
 
     @Id
     @Setter
@@ -25,22 +25,22 @@ public class ProductProperty implements BaseEntity<Long> {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Product product;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private Property property;
+    private PropertyValue propertyValue;
 
     @Builder
-    public ProductProperty(Long id, Product product, Property property) {
+    public ProductPropertyValue(Long id, Product product, PropertyValue propertyValue) {
         this.id = id;
         this.setProduct(product);
-        this.setProperty(property);
+        this.setPropertyValue(propertyValue);
     }
 
     public void setProduct(Product product) {
         this.product = product;
-        this.product.getProductProperties().add(this);
+        this.product.getProductPropertyValues().add(this);
     }
 
-    public void setProperty(Property property) {
-        this.property = property;
-        this.property.getProductProperties().add(this);
+    public void setPropertyValue(PropertyValue propertyValue) {
+        this.propertyValue = propertyValue;
+        this.propertyValue.getProductPropertyValues().add(this);
     }
 }

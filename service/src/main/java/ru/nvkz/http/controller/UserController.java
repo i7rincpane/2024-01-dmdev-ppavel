@@ -30,6 +30,7 @@ public class UserController {
     @GetMapping
     public String findAll(Model model, UserFilter filter, Pageable pageable) {
         Page<UserReadDto> page = userService.findAll(filter, pageable);
+        model.addAttribute("roles", Role.values());
         model.addAttribute("users", PageResponse.of(page));
         model.addAttribute("filter", filter);
         return "user/users";

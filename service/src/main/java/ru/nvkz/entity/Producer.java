@@ -1,29 +1,32 @@
 package ru.nvkz.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
+@ToString(exclude = {"products"})
 @Entity
-public class PropertyInfo implements BaseEntity<Integer> {
-
+@Builder
+public class Producer implements BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String unit;
-    @Enumerated(EnumType.STRING)
-    private TypeValue dtype;
+    @Builder.Default
+    @OneToMany(mappedBy = "producer")
+    private List<Product> products = new ArrayList<>();
 
 }

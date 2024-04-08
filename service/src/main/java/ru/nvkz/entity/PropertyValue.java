@@ -6,13 +6,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,28 +23,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"subProductTypes", "parent"})
 @Entity
-public class ProductType implements BaseEntity<Integer> {
+public class PropertyValue implements BaseEntity<Long> {
 
     @Id
+    @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
+    private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    private ProductType parent;
+    private Property property;
+    private String textValue;
+    private Integer numberValue;
+    private BigDecimal floatValue;
+    private Instant dateValue;
+    private Boolean booleanValue;
     @Builder.Default
-    @OneToMany(mappedBy = "parent")
-    private List<ProductType> subProductTypes = new ArrayList<>();
-
-    public ProductType(Integer id, String name, ProductType parent) {
-        this.id = id;
-        this.name = name;
-        this.setParent(parent);
-    }
-
-    public void setParent(ProductType parent) {
-        this.parent = parent;
-        parent.getSubProductTypes().add(this);
-    }
+    @OneToMany(mappedBy = "propertyValue")
+    private List<ProductPropertyValue> productPropertyValues = new ArrayList<>();
 }
