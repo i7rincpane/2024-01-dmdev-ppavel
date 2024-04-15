@@ -5,6 +5,6 @@ import lombok.Value;
 @Value
 public class ProducerReadDto {
 
-    private Integer id;
-    private String name;
+    Long id;
+    String name;
 }

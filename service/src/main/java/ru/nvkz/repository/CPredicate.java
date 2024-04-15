@@ -1,28 +1,20 @@
 package ru.nvkz.repository;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Path;
+
 import jakarta.persistence.criteria.Predicate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.function.TriFunction;
 import org.thymeleaf.util.StringUtils;
-import ru.nvkz.entity.ProductPropertyValue;
-import ru.nvkz.entity.Property;
-import ru.nvkz.entity.PropertyValue;
-import ru.nvkz.entity.PropertyValue_;
-import ru.nvkz.entity.Property_;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static java.util.Objects.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CPredicate {
@@ -43,8 +35,7 @@ public class CPredicate {
     }
 
     public <T> CPredicate add(T param, Function<T, Predicate> function) {
-
-        if (nonNull(param)) {
+        if (param != null) {
             predicates.add(function.apply(param));
         }
 
@@ -56,7 +47,6 @@ public class CPredicate {
     }
 
     public <T> CPredicate add(Collection<T> objects, Function<Collection<T>, Predicate> function) {
-
         if (objects != null && !objects.isEmpty()) {
             predicates.add(function.apply(objects));
         }
@@ -65,8 +55,7 @@ public class CPredicate {
     }
 
     public <T> CPredicate add(T param1, T param2, BiFunction<T, T, Predicate> function) {
-
-        if (nonNull(param1) && nonNull(param2)) {
+        if (param1 != null && param2 != null) {
             predicates.add(function.apply(param1, param2));
         }
 
@@ -74,20 +63,14 @@ public class CPredicate {
     }
 
     public <Y, T> CPredicate add(Map<Y, T> map1, Map<Y, T> map2, TriFunction<T, T, Y, Predicate> function) {
+        if (isEmpty(map1) || isEmpty(map2)) return this;
 
-        if (map1 != null && !map1.isEmpty()) {
-            if (map2 != null && !map2.isEmpty()) {
-                for (Map.Entry<Y, T> entry : map2.entrySet()) {
-                    if (nonNull(entry.getKey())) {
-                        T value1 = map1.get(entry.getKey());
-                        T value2 = entry.getValue();
+        for (Map.Entry<Y, T> entry : map2.entrySet()) {
+            T value1 = map1.get(entry.getKey());
+            T value2 = entry.getValue();
 
-                        if (nonNull(value1) || nonNull(value2)) {
-                            predicates.add(function.apply(value1, value2, entry.getKey()));
-                        }
-
-                    }
-                }
+            if (value1 != null || value2 != null) {
+                predicates.add(function.apply(value1, value2, entry.getKey()));
             }
         }
 
@@ -95,17 +78,13 @@ public class CPredicate {
     }
 
     public <Y, T> CPredicate add(Map<Y, List<T>> map, BiFunction<List<T>, Y, Predicate> function) {
+        if (isEmpty(map)) return this;
 
-        if (map != null && !map.isEmpty()) {
-            for (Map.Entry<Y, List<T>> entry : map.entrySet()) {
-                if (Objects.nonNull(entry.getKey())) {
-                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                        predicates.add(function.apply(entry.getValue(), entry.getKey()));
-                    }
-                }
+        for (Map.Entry<Y, List<T>> entry : map.entrySet()) {
+            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                predicates.add(function.apply(entry.getValue(), entry.getKey()));
             }
         }
-
         return this;
     }
 

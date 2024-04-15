@@ -7,7 +7,7 @@ import lombok.Value;
 @Value
 public class CategoryReadDto {
 
-    Integer id;
+    Long id;
     String name;
     CategoryReadDto parent;
 }

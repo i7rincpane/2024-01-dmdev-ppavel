@@ -2,24 +2,28 @@ package ru.nvkz.util;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @UtilityClass
 public class StreamMapper {
 
-    public static final Double mapToMaxDoubleValue(Stream<WithValue> stream) {
-        return stream.map(WithValue::getValue).mapToDouble(Double::parseDouble).max().orElseThrow();
+    public static Double mapToMaxDoubleValue(Stream<Double> stream) {
+        return stream.filter(Objects::nonNull).mapToDouble(Double::valueOf).max().orElse(0);
     }
 
-    public static final Double mapToMinDoubleValue(Stream<WithValue> stream) {
-        return stream.map(WithValue::getValue).mapToDouble(Double::parseDouble).min().orElseThrow();
+    public static Double mapToMinDoubleValue(Stream<Double> stream) {
+        return stream.filter(Objects::nonNull).mapToDouble(Double::valueOf).min().orElse(0);
     }
 
-    public static final Integer mapToMaxIntegerValue(Stream<WithValue> stream) {
-        return stream.map(WithValue::getValue).mapToInt(Integer::parseInt).max().orElseThrow();
+    public static Integer mapToMaxIntegerValue(Stream<Integer> stream) {
+        return stream.filter(Objects::nonNull).mapToInt(Integer::valueOf).max().orElse(0);
     }
 
-    public static final Integer mapToMinIntegerValue(Stream<WithValue> stream) {
-        return stream.map(WithValue::getValue).mapToInt(Integer::parseInt).min().orElseThrow();
+    public static Integer mapToMinIntegerValue(Stream<Integer> stream) {
+        return stream.filter(Objects::nonNull).mapToInt(Integer::valueOf).min().orElse(0);
     }
+
 }

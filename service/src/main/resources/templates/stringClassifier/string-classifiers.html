@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Справочник</title>
+</head>
+<body>
+<p th:text="${property.name}"></p>
+<div th:each="stringClassifier : ${stringClassifiers}">
+    <a  th:href="@{/string-classifiers/{id}(id=${stringClassifier.id})}" th:text="|${stringClassifier.id}. ${stringClassifier.name}|"></a>
+</div>
+    <div>
+        <form th:action="@{/string-classifiers/create-form}">
+            <label hidden="false" for="property">
+                <input id="property" type="text" name="propertyId" th:value="*{property.id}">
+            </label><br>
+            <button type="submit">Добавить значение</button>
+        </form>
+    </div>
+<!--<a  th:href="@{/products/{productId}(productId=${stringClassifier.id})}" text="Назад"></a>-->
+</body>
+</html>

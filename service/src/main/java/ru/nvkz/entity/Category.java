@@ -17,16 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@ToString(exclude = {"subCategories", "parent"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"subProductTypes", "parent"})
 @Entity
-public class Category implements BaseEntity<Integer> {
+public class Category implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
     private Category parent;
@@ -34,7 +34,7 @@ public class Category implements BaseEntity<Integer> {
     @OneToMany(mappedBy = "parent")
     private List<Category> subCategories = new ArrayList<>();
 
-    public Category(Integer id, String name, Category parent) {
+    public Category(Long id, String name, Category parent) {
         this.id = id;
         this.name = name;
         this.setParent(parent);

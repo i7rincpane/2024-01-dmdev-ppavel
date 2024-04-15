@@ -30,68 +30,88 @@
         <br>
         <div class="row">
             <div class="col-sm">
-                <form th:action="@{'/catalogs/' + ${parentId}}" th:object="${productFilter}">
+                <div class="row">
+                    <div class="col-sm">
+                        <form th:action="@{'/catalogs/' + ${parentId}}" th:object="${productFilter}">
 
-                    <label class="font-weight-bold">Цена
-                    </label>
-                    <div>
-                        <input id="priceFrom" name="priceFrom" type="number" th:value="${productFilter.priceFrom}">
-                        <input id="priceBy" name="priceBy" type="number" th:value="${productFilter.priceBy}">
-                    </div>
-
-                    <br>
-                    <label class="font-weight-bold">Производитель
-                    </label>
-                    <div th:each="producer : ${producers}">
-                        <input type="checkbox"
-                               th:field="*{produceIds}"
-                               th:value="${producer.id}">
-                        <label th:text="${producer.name}"></label>
-                    </div>
-
-                    <br>
-                    <div th:each="property : ${properties}">
-
-                        <label class="font-weight-bold"
-                               th:text="|${property.name} ${property.unit!=null?(property.unit):''}|">Property
-                            Name(unit)
-                        </label>
-                        <div th:if="${property.dtype.name=='NUMBER'}"
-                             th:with="maxValue=${T(ru.nvkz.util.StreamMapper).mapToMaxIntegerValue(property.propertyValueProductCounts.keySet().stream())}, minValue=${T(ru.nvkz.util.StreamMapper).mapToMinIntegerValue(property.propertyValueProductCounts.keySet().stream())}">
-                            <input th:placeholder="'от ' + ${minValue}" th:min="${minValue}" th:max="${maxValue}"
-                                   th:field="*{propertyIdPropertyValueNumberFrom['__${property.id}__']}" type="number">
-                            <input th:placeholder="'до ' + ${maxValue}" th:min="${minValue}" th:max="${maxValue}"
-                                   th:field="*{propertyIdPropertyValueNumberBy['__${property.id}__']}" type="number">
-
-                        </div>
-                        <div th:if="${property.dtype.name=='FLOAT'}"
-                             th:with="minValue=${T(ru.nvkz.util.StreamMapper).mapToMinDoubleValue(property.propertyValueProductCounts.keySet().stream())},
- maxValue=${T(ru.nvkz.util.StreamMapper).mapToMaxDoubleValue(property.propertyValueProductCounts.keySet().stream())}">
-
-                            <input th:field="*{propertyIdPropertyValueFloatFrom['__${property.id}__']}" type="number"
-                                   th:placeholder="'от ' + ${minValue}" th:min="${minValue}" th:max="${maxValue}"
-                                   step="0.01">
-                            <input th:field="*{propertyIdPropertyValueFloatBy['__${property.id}__']}" type="number"
-                                   step="0.01" th:placeholder="'до ' + ${maxValue}" th:min="${minValue}"
-                                   th:max="${maxValue}">
-                        </div>
-
-                        <div th:if="${property.dtype.name=='TEXT'}">
-                            <div th:each="propertyValue : ${property.propertyValueProductCounts}">
-                                <input type="checkbox"
-                                       th:field="*{propertyIdPropertyValueTextIds['__${property.id}__']}"
-                                       th:value="${propertyValue.getKey().id}">
-                                <label th:text="|${propertyValue.getKey().value} (${propertyValue.value})|"></label>
+                            <label class="font-weight-bold">Цена
+                            </label>
+                            <div>
+                                <input id="priceFrom" name="priceFrom" type="number"
+                                       th:value="${productFilter.priceFrom}">
+                                <input id="priceBy" name="priceBy" type="number" th:value="${productFilter.priceBy}">
                             </div>
-                        </div>
-                        <br>
+
+                            <br>
+                            <label class="font-weight-bold">Производитель
+                            </label>
+                            <div th:each="producer : ${producers}">
+                                <input type="checkbox"
+                                       th:field="*{produceIds}"
+                                       th:value="${producer.id}">
+                                <label th:text="${producer.name}"></label>
+                            </div>
+
+                            <br>
+                            <div th:each="property : ${properties}">
+
+                                <a class="font-weight-bold" th:href="@{'/properties/'+ ${property.id}}" th:text="|${property.name} ${property.unit!=null?(property.unit):''}|"></a>
+<!--                                <label class="font-weight-bold"-->
+<!--                                       th:text="|${property.name} ${property.unit!=null?(property.unit):''}|">Property-->
+<!--                                    Name(unit)-->
+<!--                                </label>-->
+                                <div th:if="${property.dtype.name=='NUMBER'}"
+                                     th:with="maxValue=${T(ru.nvkz.util.StreamMapper).mapToMaxIntegerValue(property.numberValueCounts.keySet().stream())}, minValue=${T(ru.nvkz.util.StreamMapper).mapToMinIntegerValue(property.numberValueCounts.keySet().stream())}">
+                                    <input th:placeholder="'от ' + ${minValue}" th:min="${minValue}"
+                                           th:max="${maxValue}"
+                                           th:field="*{propertyIdNumberValueFrom['__${property.id}__']}"
+                                           type="number">
+                                    <input th:placeholder="'до ' + ${maxValue}" th:min="${minValue}"
+                                           th:max="${maxValue}"
+                                           th:field="*{propertyIdNumberValueBy['__${property.id}__']}"
+                                           type="number">
+
+                                </div>
+                                <div th:if="${property.dtype.name=='FLOAT'}"
+                                     th:with="minValue=${T(ru.nvkz.util.StreamMapper).mapToMinDoubleValue(property.floatValueCounts.keySet().stream())},
+ maxValue=${T(ru.nvkz.util.StreamMapper).mapToMaxDoubleValue(property.floatValueCounts.keySet().stream())}">
+
+                                    <input th:field="*{propertyIdFloatValueFrom['__${property.id}__']}"
+                                           type="number"
+                                           th:placeholder="'от ' + ${minValue}" th:min="${minValue}"
+                                           th:max="${maxValue}"
+                                           step="0.01">
+                                    <input th:field="*{propertyIdFloatValueBy['__${property.id}__']}"
+                                           type="number"
+                                           step="0.01" th:placeholder="'до ' + ${maxValue}" th:min="${minValue}"
+                                           th:max="${maxValue}">
+                                </div>
+
+                                <div th:if="${property.dtype.name=='STRING_CLASSIFIER'}">
+                                    <div th:each="stringClassifier : ${property.stringClassifierValueCounts}">
+                                        <input type="checkbox"
+                                               th:field="${productFilter.propertyIdStringClassifierIds['__${property.id}__']}"
+                                               th:value="${stringClassifier.getKey().id}">
+                                        <label th:text="|${stringClassifier.getKey().getName()} (${stringClassifier.value})|"></label>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                            <button type="submit">Применить</button>
+                        </form>
                     </div>
-                    <button type="submit">Применить</button>
-                </form>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <form th:action="@{/catalogs/{parentId}/properties/create-form(parentId=${parentId})}">
+                            <button type="submit">Добавить свойство</button>
+                        </form>
+                    </div>
+                </div>
             </div>
             <div class="col-sm">
                 <div th:each="product : ${products}">
-                    <a th:href="@{'/catalogs/product/' + ${product.id}}"
+                    <a th:href="@{'/products/' + ${product.id}}"
                        th:text="|${product.id}. ${product.name}|">User</a>
                 </div>
             </div>

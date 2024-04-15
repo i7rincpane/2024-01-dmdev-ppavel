@@ -29,7 +29,7 @@ class ProductRepositoryIT extends IntegrationTestBase {
                 .priceBy(new BigDecimal(9999.0))
                 .build();
 
-        List<Product> productActualBatch = repository.findAllDistinctByProductFilter(productFilter, 5);
+        List<Product> productActualBatch = repository.findAllDistinctByProductFilter(productFilter, 5l);
 
         Assertions.assertThat(productActualBatch).hasSize(2);
         List<String> productNameActualBatch = productActualBatch.stream().map(Product::getName).toList();

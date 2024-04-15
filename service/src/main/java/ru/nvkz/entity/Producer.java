@@ -20,10 +20,11 @@ import java.util.List;
 @ToString(exclude = {"products"})
 @Entity
 @Builder
-public class Producer implements BaseEntity<Integer> {
+public class Producer implements BaseEntity<Long> {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String name;
     @Builder.Default
     @OneToMany(mappedBy = "producer")

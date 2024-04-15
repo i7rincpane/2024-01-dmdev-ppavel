@@ -20,16 +20,17 @@ public class ProductReadMapper implements Mapper<Product, ProductReadDto> {
 
     @Override
     public ProductReadDto map(Product object) {
-        return new ProductReadDto(
-                object.getId(),
-                object.getCode(),
-                object.getName(),
-                object.getModel(),
-                getProducerDto(object.getProducer()),
-                object.getPrice(),
-                object.getCount(),
-                getCategoryDto(object.getCategory())
-        );
+        return ProductReadDto.builder()
+                .id(object.getId())
+                .code(object.getCode())
+                .name(object.getName())
+                .model(object.getModel())
+                .producer(getProducerDto(object.getProducer()))
+                .price(object.getPrice())
+                .count(object.getCount())
+                .category(getCategoryDto(object.getCategory()))
+                .build();
+
     }
 
     private ProducerReadDto getProducerDto(Producer producer) {

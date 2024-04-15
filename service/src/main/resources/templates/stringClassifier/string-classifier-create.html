@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание значения справочника</title>
+</head>
+<body>
+<form th:action="@{/string-classifiers}" method="post">
+    <label for="name">Название:
+        <input id="name" type="text" name="name">
+    </label><br>
+    <label hidden="false" for="property">
+        <input id="property" type="text" name="propertyId" th:value="${stringClassifier.propertyId}">
+    </label><br>
+    <button type="submit">Создать</button>
+</form>
+</body>
+</html>
+

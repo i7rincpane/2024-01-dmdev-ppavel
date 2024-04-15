@@ -5,6 +5,6 @@ import lombok.Value;
 @Value
 public class ProducerFilter {
 
-    Integer id;
+    Long id;
     String name;
 }

@@ -2,11 +2,11 @@ package ru.nvkz.dto;
 
 public interface CategoryPathElement {
 
-    Integer getId();
+    Long getId();
 
     String getName();
 
-    Integer getParentId();
+    Long getParentId();
 
     Integer getLevel();
 }

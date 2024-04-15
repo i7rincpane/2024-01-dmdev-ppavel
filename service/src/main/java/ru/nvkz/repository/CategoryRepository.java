@@ -9,12 +9,12 @@ import ru.nvkz.entity.Category;
 import java.util.List;
 import java.util.Optional;
 
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    Optional<Category> findById(Integer id);
+    Optional<Category> findById(Long id);
 
     @EntityGraph(attributePaths = {"parent"})
-    List<Category> findAllByParentId(Integer id);
+    List<Category> findAllByParentId(Long id);
 
     List<Category> findAllByName(String name);
 
@@ -30,6 +30,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
                     "SELECT parents.* FROM ( " +
                     "                                                     SELECT id, name, level, parent_id parentId FROM r " +
                     "                                                     ORDER BY level DESC) parents")
-    List<CategoryPathElement> findAllPathElementByParentId(Integer parentId);
+    List<CategoryPathElement> findAllPathElementByParentId(Long parentId);
 
 }

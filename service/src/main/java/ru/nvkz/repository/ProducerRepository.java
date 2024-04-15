@@ -10,10 +10,10 @@ import java.util.List;
 @Repository
 public interface ProducerRepository extends JpaRepository<Producer, Integer> {
 
-    @Query(value = "select prod from Producer prod " +
-            "join prod.products p " +
+    @Query(value = "select producer from Producer producer " +
+            "join producer.products p " +
             "join p.category c " +
             "where c.id = :categoryId " +
-            "group by prod.id ")
-    List<Producer> findAllByCategoryId(Integer categoryId);
+            "group by producer.id ")
+    List<Producer> findAllByCategoryId(Long categoryId);
 }

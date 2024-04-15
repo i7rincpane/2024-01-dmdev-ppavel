@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Обновление свойства</title>
+</head>
+<body>
+
+<form th:action="@{/properties/{propertyId}/update(propertyId=${property.id})}" method="post"
+      th:object="${property}">
+    <label for="name">Имя:
+        <input id="name" type="text" name="name" th:value="*{name}">
+    </label><br>
+    <label hidden="false" for="category">Категория:
+        <input id="category" type="text" name="categoryId" th:value="*{category.id}">
+    </label><br>
+    <label for="unit">Единица измерения:
+        <input id="unit" type="text" name="unit" th:value="*{unit}">
+    </label><br>
+    <div th:each="type : ${types}">
+        <input th:id="${type}" type="radio" name="dtype" th:value="${type}" th:checked="${type == property.dtype}">
+        <label th:for="${type}" th:text="${type}">Тип</label>
+    </div>
+    <br>
+    <button type="submit">Обновить</button>
+</form>
+<form th:action="@{/properties/{propertyId}/delete(propertyId=${property.id})}" method="post">
+    <input hidden="false" type="text" name="categoryId" th:value="*{property.category.id}">
+    <button type="submit">Remove</button>
+</form>
+</body>
+</html>

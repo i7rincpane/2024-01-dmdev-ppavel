@@ -9,17 +9,69 @@
 <div class="container">
     <div class="row">
         <div class="col-sm">
-            <p th:text="|Название: ${product.getName()}|"></p>
-            <p th:text="|Код: ${product.getCode()}|"></p>
-            <p th:text="|Модель: ${product.getModel()}|"></p>
-            <p th:text="|Тип продукта: ${product.getCategoryRead().getName()}|"></p>
-            <p th:text="|Цена: ${product.getPrice()}|"></p>
-            <p th:text="|Продюсер: ${product.getProducer().getName()}|"></p>
-            <p th:text="|Количество: ${product.getCount()}|"></p>
+            <form th:action="@{/products/{productId}/update(productId=${productRead.id})}" method="post"
+                  th:object="${productRead}">
+                <p th:text="|Название: ${productRead.getName()}|"></p>
+                <p th:text="|Количество: ${productRead.getCount()}|"></p>
+                <p th:text="|Тип продукта: ${productRead.getCategory().getName()}|"></p>
+                <label for="code">Код:
+                    <input id="code" type="number" name="code" th:value="*{code}">
+                </label><br>
+                <label for="model">Модель:
+                    <input id="model" type="text" name="model" th:value="*{model}">
+                </label><br>
+                <label for="price">Цена:
+                    <input id="price" type="number" name="price" step="0.01" th:value="*{price}">
+                </label><br>
+                <label for="producer">Производитель:
+                    <select id="producer" name="producerId">
+                        <option th:each="producer : ${producers}"
+                                th:value="${producer.id}"
+                                th:selected="${producer.id == productRead.producer.id}"
+                                th:text="${producer.name}"></option>
+                    </select>
+                </label>
+                <div th:each="productProperty : ${productProperties}">
+                    <p th:if="${productProperty.property.dtype.name!='STRING_CLASSIFIER'}" class="font-weight-bold"
+                       th:text="|${productProperty.property.getName()}|"></p>
+
+                    <div th:if="${productProperty.property.dtype.name=='TEXT'}">
+                        <input th:field="${productCreateEdit.propertyIdTextValue['__${productProperty.property.id}__']}"
+                               type="text"
+                               th:value="${productProperty.textValue}">
+                    </div>
+                    <div th:if="${productProperty.property.dtype.name=='NUMBER'}">
+
+                        <input th:field="${productCreateEdit.propertyIdNumberValue['__${productProperty.property.id}__']}"
+                               type="number"
+                               th:value="${productProperty.numberValue}">
+                    </div>
+                    <div th:if="${productProperty.property.dtype.name=='FLOAT'}">
+
+                        <input th:field="${productCreateEdit.propertyIdFloatValue['__${productProperty.property.id}__']}"
+                               type="number"
+                               th:value="${productProperty.floatValue}"
+                               step="0.01">
+                    </div>
+                    <div th:if="${productProperty.property.dtype.name=='STRING_CLASSIFIER'}">
+
+                        <a class="font-weight-bold"
+                           th:href="@{'/properties/'+ ${productProperty.property.id}+'/string-classifiers'}"
+                           th:text="|${productProperty.property.getName()}|"></a>
+                        <br>
+                        <select th:id="${productProperty.property.id}"
+                                th:field="${productCreateEdit.propertyIdStringClassifierId['__${productProperty.property.id}__']}">
+                            <option th:each="stringClassifier: ${propertyIdStringClassifiers.get(productProperty.property.id) }"
+                                    th:value="${stringClassifier.id}"
+                                    th:text="|${stringClassifier.id}. ${stringClassifier.name}|"></option>
+                        </select>
+                    </div>
+                    <br>
+                </div>
+                <button type="submit">Update</button>
+            </form>
         </div>
     </div>
-
 </div>
-
 </body>
 </html>

@@ -16,13 +16,13 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class CategoryService {
 
-    private static final Integer PARENT_ROOT_ID = null;
+    private static final Long PARENT_ROOT_ID = null;
 
     private final CategoryRepository categoryRepository;
 
     public final CategoryReadMapper categoryReadMapper;
 
-    public List<CategoryPathElement> findAllPathElementByParentId(Integer id) {
+    public List<CategoryPathElement> findAllPathElementByParentId(Long id) {
         return categoryRepository.findAllPathElementByParentId(id);
     }
 
@@ -36,13 +36,13 @@ public class CategoryService {
                 .toList();
     }
 
-    public List<CategoryReadDto> findAllByParentId(Integer id) {
+    public List<CategoryReadDto> findAllByParentId(Long id) {
         return categoryRepository.findAllByParentId(id).stream()
                 .map(categoryReadMapper::map)
                 .toList();
     }
 
-    public Optional<CategoryReadDto> findById(Integer id) {
+    public Optional<CategoryReadDto> findById(Long id) {
         return categoryRepository.findById(id)
                 .map(categoryReadMapper::map);
     }

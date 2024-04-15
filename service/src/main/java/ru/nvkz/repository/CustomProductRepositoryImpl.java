@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.ListJoin;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -14,13 +15,13 @@ import ru.nvkz.entity.Category_;
 import ru.nvkz.entity.Producer;
 import ru.nvkz.entity.Producer_;
 import ru.nvkz.entity.Product;
-import ru.nvkz.entity.ProductPropertyValue;
-import ru.nvkz.entity.ProductPropertyValue_;
+import ru.nvkz.entity.ProductProperty;
+import ru.nvkz.entity.ProductProperty_;
 import ru.nvkz.entity.Product_;
 import ru.nvkz.entity.Property;
-import ru.nvkz.entity.PropertyValue;
-import ru.nvkz.entity.PropertyValue_;
 import ru.nvkz.entity.Property_;
+import ru.nvkz.entity.StringClassifier;
+import ru.nvkz.entity.StringClassifier_;
 import ru.nvkz.filter.ProductFilter;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
 
     private final EntityManager entityManager;
 
-    public List<Product> findAllDistinctByProductFilter(ProductFilter productFilter, Integer categoryId) {
+    public List<Product> findAllDistinctByProductFilter(ProductFilter productFilter, Long categoryId) {
         log.info("find all distinct by productfilter, filter {}", productFilter);
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -41,9 +42,9 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
         Join<Product, Producer> producer = (Join<Product, Producer>) product.fetch(Product_.producer);
         Join<Product, Category> category = (Join<Product, Category>) product.fetch(Product_.category);
         Join<Category, Category> categoryParent = (Join<Category, Category>) category.fetch(Category_.parent);
-        ListJoin<Product, ProductPropertyValue> productPropertyValues = product.join(Product_.productPropertyValues);
-        Join<ProductPropertyValue, PropertyValue> propertyValue = productPropertyValues.join(ProductPropertyValue_.propertyValue);
-        Join<PropertyValue, Property> property = propertyValue.join(PropertyValue_.property);
+        ListJoin<Product, ProductProperty> productProperties = product.join(Product_.productProperties);
+        Join<ProductProperty, Property> property = productProperties.join(ProductProperty_.property, JoinType.LEFT);
+        Join<ProductProperty, StringClassifier> stringClassifier = productProperties.join(ProductProperty_.stringClassifier, JoinType.LEFT);
 
         Predicate[] productPredicates = CPredicate.builder()
                 .add(categoryId, (param) -> cb.equal(category.get(Category_.ID), param))
@@ -52,30 +53,30 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                 .build();
 
         Predicate[] propertyPredicates = CPredicate.builder()
-                .add(productFilter.getPropertyIdPropertyValueNumberFrom(),
-                        productFilter.getPropertyIdPropertyValueNumberBy(),
+                .add(productFilter.getPropertyIdNumberValueFrom(),
+                        productFilter.getPropertyIdNumberValueBy(),
                         (value1, value2, key) ->
                                 cb.and(CPredicate.builder()
-                                        .add(value1, value2, (param1, param2) -> cb.between(propertyValue.get(PropertyValue_.NUMBER_VALUE), param1, param2))
-                                        .addIf(value2, param -> cb.lessThan(propertyValue.get(PropertyValue_.NUMBER_VALUE), param), Objects.isNull(value1))
-                                        .addIf(value1, param -> cb.greaterThan(propertyValue.get(PropertyValue_.NUMBER_VALUE), param), Objects.isNull(value2))
+                                        .add(value1, value2, (param1, param2) -> cb.between(productProperties.get(ProductProperty_.NUMBER_VALUE), param1, param2))
+                                        .addIf(value2, param -> cb.lessThan(productProperties.get(ProductProperty_.NUMBER_VALUE), param), Objects.isNull(value1))
+                                        .addIf(value1, param -> cb.greaterThan(productProperties.get(ProductProperty_.NUMBER_VALUE), param), Objects.isNull(value2))
                                         .add(key, param -> cb.equal(property.get(Property_.ID), param))
                                         .build())
                 )
-                .add(productFilter.getPropertyIdPropertyValueFloatFrom(),
-                        productFilter.getPropertyIdPropertyValueFloatBy(),
+                .add(productFilter.getPropertyIdFloatValueFrom(),
+                        productFilter.getPropertyIdFloatValueBy(),
                         (value1, value2, key) ->
                                 cb.and(CPredicate.builder()
-                                        .add(value1, value2, (param1, param2) -> cb.between(propertyValue.get(PropertyValue_.FLOAT_VALUE), param1, param2))
-                                        .addIf(value2, param -> cb.lessThan(propertyValue.get(PropertyValue_.FLOAT_VALUE), param), Objects.isNull(value1))
-                                        .addIf(value1, param -> cb.greaterThan(propertyValue.get(PropertyValue_.FLOAT_VALUE), param), Objects.isNull(value2))
+                                        .add(value1, value2, (param1, param2) -> cb.between(productProperties.get(ProductProperty_.FLOAT_VALUE), param1, param2))
+                                        .addIf(value2, param -> cb.lessThan(productProperties.get(ProductProperty_.FLOAT_VALUE), param), Objects.isNull(value1))
+                                        .addIf(value1, param -> cb.greaterThan(productProperties.get(ProductProperty_.FLOAT_VALUE), param), Objects.isNull(value2))
                                         .add(key, param -> cb.equal(property.get(Property_.ID), param))
                                         .build())
                 )
-                .add(productFilter.getPropertyIdPropertyValueTextIds(),
+                .add(productFilter.getPropertyIdStringClassifierIds(),
                         (paramInMap, key) ->
                                 cb.and(CPredicate.builder()
-                                        .add(paramInMap, param -> propertyValue.get(PropertyValue_.ID).in(paramInMap))
+                                        .add(paramInMap, param -> stringClassifier.get(StringClassifier_.ID).in(paramInMap))
                                         .add(key, param -> cb.equal(property.get(Property_.ID), param))
                                         .build())
                 ).build();

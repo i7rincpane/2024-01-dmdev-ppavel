@@ -2,61 +2,89 @@ package ru.nvkz.extractor;
 
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-import ru.nvkz.dto.PropertyReadDto;
-import ru.nvkz.dto.PropertyValueReadDto;
+import ru.nvkz.dto.PropertyFilterReadDto;
+import ru.nvkz.dto.StringClassifierReadDto;
 import ru.nvkz.entity.TypeValue;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Component
-public class PropertyReadDtoExtractor implements ResultSetExtractor<List<PropertyReadDto>> {
+public class PropertyReadDtoExtractor implements ResultSetExtractor<List<PropertyFilterReadDto>> {
 
     @Override
-    public List<PropertyReadDto> extractData(ResultSet rs) throws SQLException {
-        Map<Long, PropertyReadDto> resultMap = new HashMap<>();
+    public List<PropertyFilterReadDto> extractData(ResultSet rs) throws SQLException {
+        Map<Long, PropertyFilterReadDto> resultMap = new HashMap<>();
         while (rs.next()) {
             Long id = rs.getLong("property_id");
             resultMap.merge(id, this.createProperty(rs), (oldValue, newValue) -> {
-                PropertyValueReadDto value = newValue.getPropertyValueProductCounts().keySet().stream().findFirst().get();
-                Integer oldCount = oldValue.getPropertyValueProductCounts().getOrDefault(value, 0);
-                oldValue.getPropertyValueProductCounts().put(value, oldCount + 1);
+                incrementValueCounts(oldValue.getStringClassifierValueCounts(), newValue.getStringClassifierValueCounts());
+                incrementValueCounts(oldValue.getBooleanValueCounts(), newValue.getBooleanValueCounts());
+                incrementValueCounts(oldValue.getFloatValueCounts(), newValue.getFloatValueCounts());
+                incrementValueCounts(oldValue.getNumberValueCounts(), newValue.getNumberValueCounts());
+                incrementValueCounts(oldValue.getDateValueCounts(), newValue.getDateValueCounts());
+                incrementValueCounts(oldValue.getTextValueCounts(), newValue.getTextValueCounts());
                 return oldValue;
             });
         }
         return new ArrayList<>(resultMap.values());
     }
 
-    private PropertyReadDto createProperty(ResultSet rs) throws SQLException {
-        Integer propertyInfoId = rs.getInt("property_id");
-        String propertyInfoUnit = rs.getString("property_unit");
-        String propertyInfoName = rs.getString("property_name");
-        String propertyInfoDtype = rs.getString("property_dtype");
-        Long propertyValueId = rs.getLong("property_value_id");
-        String propertyValue = getValue(rs.getString("property_value_text"),
-                rs.getString("property_value_number"),
-                rs.getString("property_value_float"),
-                rs.getString("property_value_date"),
-                rs.getString("property_value_boolean"));
-        Map<PropertyValueReadDto, Integer> propertyValueWithCountProductMap = new HashMap<>();
-        propertyValueWithCountProductMap.put(new PropertyValueReadDto(propertyValueId, propertyValue), 1);
-        return PropertyReadDto.builder()
-                .id(propertyInfoId)
-                .name(propertyInfoName)
-                .unit(propertyInfoUnit)
-                .dtype(TypeValue.valueOf(propertyInfoDtype))
-                .propertyValueProductCounts(propertyValueWithCountProductMap)
+    private static <T> void incrementValueCounts(Map<T, Integer> oldValues, Map<T, Integer> newValues) {
+        newValues.keySet().stream().findFirst().ifPresent(
+                (value) -> {
+                    Integer oldCount = oldValues.getOrDefault(value, 0);
+                    oldValues.put(value, oldCount + 1);
+                }
+        );
+
+    }
+
+    private PropertyFilterReadDto createProperty(ResultSet rs) throws SQLException {
+        return PropertyFilterReadDto.builder()
+                .id(rs.getLong("property_id"))
+                .name(rs.getString("property_name"))
+                .unit(rs.getString("property_unit"))
+                .dtype(TypeValue.valueOf(rs.getString("property_dtype")))
+                .textValueCounts(createNewValueCounts(rs.getString("text_value")))
+                .numberValueCounts(createNewValueCounts(rs.getInt("number_value")))
+                .floatValueCounts(createNewValueCounts(rs.getDouble("float_value")))
+                .dateValueCounts(createNewValueCounts(rs.getTimestamp("date_value"), Timestamp::toInstant))
+                .stringClassifierValueCounts(createNewValueCounts(rs.getLong("string_classifier_id"), rs.getString("string_classifier_name"),
+                        (id, name) -> new StringClassifierReadDto(id, name, null)))
+                .booleanValueCounts(createNewValueCounts(rs.getBoolean("boolean_value")))
                 .build();
     }
 
-    private String getValue(String... values) {
-        return Arrays.stream(values).filter(Objects::nonNull).findFirst().get();
+    private static <T, R> Map<T, Integer> createNewValueCounts(R object, Function<R, T> mapper) {
+        Map<T, Integer> result = new HashMap<>();
+        if (object != null) {
+            result.put(mapper.apply(object), 1);
+        }
+        return result;
+    }
+
+    private static <T, R, O> Map<T, Integer> createNewValueCounts(R object, O object2, BiFunction<R, O, T> mapper) {
+        Map<T, Integer> result = new HashMap<>();
+        if (object != null && object2 != null) {
+            result.put(mapper.apply(object, object2), 1);
+        }
+        return result;
+    }
+
+    private static <T> Map<T, Integer> createNewValueCounts(T object) {
+        Map<T, Integer> result = new HashMap<>();
+        if (object != null) {
+            result.put(object, 1);
+        }
+        return result;
     }
 
 }

@@ -5,5 +5,6 @@ public enum TypeValue {
     NUMBER,
     TEXT,
     FLOAT,
-    BOOLEAN
+    BOOLEAN,
+    STRING_CLASSIFIER
 }

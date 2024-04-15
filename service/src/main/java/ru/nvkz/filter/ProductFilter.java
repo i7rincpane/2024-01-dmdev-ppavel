@@ -14,10 +14,10 @@ public class ProductFilter {
 
     BigDecimal priceFrom;
     BigDecimal priceBy;
-    List<Integer> produceIds;
-    Map<Integer, List<Integer>> propertyIdPropertyValueTextIds = new HashMap<>();
-    Map<Integer, Integer> propertyIdPropertyValueNumberFrom = new HashMap<>();
-    Map<Integer, Integer> propertyIdPropertyValueNumberBy = new HashMap<>();
-    Map<Integer, Double> propertyIdPropertyValueFloatFrom = new HashMap<>();
-    Map<Integer, Double> propertyIdPropertyValueFloatBy = new HashMap<>();
+    List<Long> produceIds;
+    Map<Integer, List<Long>> propertyIdStringClassifierIds = new HashMap<>();
+    Map<Integer, Integer> propertyIdNumberValueFrom = new HashMap<>();
+    Map<Integer, Integer> propertyIdNumberValueBy = new HashMap<>();
+    Map<Integer, Double> propertyIdFloatValueFrom = new HashMap<>();
+    Map<Integer, Double> propertyIdFloatValueBy = new HashMap<>();
 }

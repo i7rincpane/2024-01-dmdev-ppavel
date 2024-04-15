@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Обновление элемента справочника</title>
+</head>
+<body>
+<form th:action="@{/string-classifiers/{id}/update(id=${stringClassifier.id})}" method="post"
+      th:object="${stringClassifier}">
+    <label for="name">Название:
+        <input id="name" type="text" name="name" th:value="*{name}">
+    </label><br>
+    <label hidden="false" for="property">Свойство:
+        <input id="property" type="text" name="propertyId" th:value="*{property.id}">
+    </label><br>
+    <button type="submit">Обновить</button>
+</form>
+<form th:action="@{/string-classifiers/{id}/delete(id=${stringClassifier.id})}" method="post">
+    <input hidden="false" type="text" name="propertyId" th:value="*{stringClassifier.property.id}">
+    <button type="submit">Удалить</button>
+</form>
+</body>
+</html>
+

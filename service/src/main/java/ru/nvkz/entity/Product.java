@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(exclude = {"productProperties"})
+@ToString(exclude = {"productPropertyValues"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -40,7 +40,7 @@ public class Product implements BaseEntity<Long> {
     private Category category;
     @Builder.Default
     @OneToMany(mappedBy = "product")
-    private List<ProductPropertyValue> productPropertyValues = new ArrayList<>();
+    private List<ProductProperty> productProperties = new ArrayList<>();
 
     public String getName() {
         return String.join(" ", category.getName(), producer.getName(), model);

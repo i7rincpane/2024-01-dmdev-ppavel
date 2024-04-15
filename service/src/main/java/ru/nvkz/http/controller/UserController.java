@@ -1,11 +1,14 @@
 package ru.nvkz.http.controller;
 
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +22,7 @@ import ru.nvkz.dto.UserReadDto;
 import ru.nvkz.entity.Role;
 import ru.nvkz.filter.UserFilter;
 import ru.nvkz.service.UserService;
+import ru.nvkz.validation.group.CreateAction;
 
 @Controller
 @RequestMapping("/users")
@@ -55,8 +59,16 @@ public class UserController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute UserCreateEditDto user, RedirectAttributes redirectAttributes) {
-        return "redirect:/users/" + userService.create(user).getId();
+    public String create(@ModelAttribute @Validated({Default.class, CreateAction.class}) UserCreateEditDto user,
+                         BindingResult bindingResult,
+                         RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("user", user);
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+            return "redirect:/users/registration";
+        }
+        userService.create(user);
+        return "redirect:/login";
     }
 
     @PostMapping("/{id}/update")

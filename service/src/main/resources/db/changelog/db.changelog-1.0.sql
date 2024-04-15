@@ -3,15 +3,15 @@
 --changeset dnsshop:1
 CREATE TABLE producer
 (
-    id   SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
+    id          BIGSERIAL PRIMARY KEY,
+    name        VARCHAR(255)                    NOT NULL
 );
 
 --changeset dnsshop:2
 CREATE TABLE category
 (
-    id        SERIAL PRIMARY KEY,
-    parent_id INT REFERENCES category (id),
+    id        BIGSERIAL PRIMARY KEY,
+    parent_id BIGINT REFERENCES category (id),
     name      VARCHAR(255) NOT NULL UNIQUE
 );
 
@@ -20,7 +20,7 @@ CREATE TABLE users
 (
     id         BIGSERIAL PRIMARY KEY,
     email      VARCHAR(255) NOT NULL UNIQUE,
-    password   VARCHAR(255) NOT NULL,
+    password   VARCHAR(255) NOT NULL DEFAULT '{noop}123',
     name       VARCHAR(255),
     patronimic VARCHAR(255),
     surname    VARCHAR(255),
@@ -33,43 +33,48 @@ CREATE TABLE users
 CREATE TABLE product
 (
     id          BIGSERIAL PRIMARY KEY,
-    code        INT                          NOT NULL UNIQUE,
+    code        INT                             NOT NULL UNIQUE,
     model       VARCHAR(255),
-    price       NUMERIC(19, 2)               NOT NULL,
-    producer_id INT REFERENCES producer (id) NOT NULL,
-    count       INT                          NOT NULL,
-    category_id INT REFERENCES category (id) NOT NULL
+    price       NUMERIC(19, 2)                  NOT NULL,
+    producer_id BIGINT REFERENCES producer (id) NOT NULL,
+    count       INT                             NOT NULL,
+    category_id BIGINT REFERENCES category (id) NOT NULL
 );
 
 --changeset dnsshop:5
 CREATE TABLE property
 (
-    id          SERIAL PRIMARY KEY,
-    name        VARCHAR(255)                 NOT NULL,
-    category_id INT REFERENCES category (id) NOT NULL,
+    id          BIGSERIAL PRIMARY KEY,
+    name        VARCHAR(255)                    NOT NULL,
+    category_id BIGINT REFERENCES category (id) NOT NULL,
     unit        VARCHAR(255),
-    dtype       VARCHAR(31)                  NOT NULL
+    dtype       VARCHAR(31)                     NOT NULL,
+    UNIQUE (category_id, name)
 );
 
 --changeset dnsshop:6
-CREATE TABLE property_value
+CREATE TABLE string_classifier
 (
-    id            BIGSERIAL PRIMARY KEY,
-    property_id   INT REFERENCES property (id) NOT NULL,
-    text_value    VARCHAR(255),
-    number_value  INT,
-    float_value   NUMERIC(19, 2),
-    date_value    TIMESTAMP,
-    boolean_value BOOLEAN
+    id          BIGSERIAL PRIMARY KEY,
+    name        VARCHAR(255)                    NOT NULL,
+    property_id BIGINT REFERENCES property (id) NOT NULL,
+    UNIQUE (property_id, name)
 );
 
 --changeset dnsshop:7
-CREATE TABLE product_property_value
+CREATE TABLE product_property
 (
-    id                BIGSERIAL PRIMARY KEY,
-    product_id        BIGINT REFERENCES product (id)        NOT NULL,
-    property_value_id BIGINT REFERENCES property_value (id) NOT NULL,
-    UNIQUE (product_id, property_value_id)
+    id                   BIGSERIAL PRIMARY KEY,
+    product_id           BIGINT REFERENCES product (id)  NOT NULL,
+    property_id          BIGINT REFERENCES property (id) NOT NULL,
+    string_classifier_id BIGINT REFERENCES string_classifier (id),
+    text_value           VARCHAR(255),
+    number_value         INT,
+    float_value          DOUBLE PRECISION,
+    date_value           TIMESTAMP,
+    boolean_value        BOOLEAN,
+
+    UNIQUE (product_id, property_id)
 );
 
 --changeset dnsshop:8

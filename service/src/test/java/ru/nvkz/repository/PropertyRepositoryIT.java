@@ -1,9 +1,10 @@
 package ru.nvkz.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.nvkz.IntegrationTestBase;
-import ru.nvkz.dto.PropertyReadDto;
+import ru.nvkz.dto.PropertyFilterReadDto;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor
 class PropertyRepositoryIT extends IntegrationTestBase {
 
-    private static final Integer ELECTRIC_HOB_TYPE_ID = 5;
+    private static final Long ELECTRIC_HOB_TYPE_ID = 5L;
 
     private final PropertyRepository repository;
 
@@ -20,12 +21,18 @@ class PropertyRepositoryIT extends IntegrationTestBase {
     void findAllDistinctPropertyByProductTypeId() {
         String[] expectedPropertyNames = {"Таймер конфорок", "Основной материал изготовления панели", "Всего конфорок", "Ширина", "Рамка"};
 
-        List<PropertyReadDto> properties = repository.findAllWithCountProductPropertyValue(ELECTRIC_HOB_TYPE_ID);
+        List<PropertyFilterReadDto> properties = repository.findAllWithCountProductProperty(ELECTRIC_HOB_TYPE_ID);
 
         assertThat(properties).hasSize(5);
         List<String> propertyNameBatch = properties.stream()
-                .map(PropertyReadDto::getName)
+                .map(PropertyFilterReadDto::getName)
                 .toList();
         assertThat(propertyNameBatch).contains(expectedPropertyNames);
+    }
+
+    @Test
+    @DisplayName("Создание всех типов свойств")
+    void test() {
+
     }
 }
