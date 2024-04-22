@@ -11,12 +11,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-public class ProductOrder implements BaseEntity<Long> {
+public class OrderProduct implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +28,5 @@ public class ProductOrder implements BaseEntity<Long> {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Order order;
     private Integer count;
+    private BigDecimal sum;
 }

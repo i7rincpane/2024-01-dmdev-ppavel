@@ -9,6 +9,7 @@ import ru.nvkz.mapper.StringClassifierCreateEditMapper;
 import ru.nvkz.mapper.StringClassifierReadMapper;
 import ru.nvkz.repository.StringClassifierRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +21,13 @@ public class StringClassifierService {
     private final StringClassifierRepository stringClassifierRepository;
     private final StringClassifierReadMapper stringClassifierReadMapper;
     private final StringClassifierCreateEditMapper stringClassifierCreateEditMapper;
+    private final PropertyService propertyService;
 
     public List<StringClassifierReadDto> findByPropertyId(Long propertyId) {
-        return stringClassifierRepository.findByPropertyId(propertyId).stream().map(stringClassifierReadMapper::map).toList();
+        List<StringClassifierReadDto> result = new ArrayList<>();
+        result.add(new StringClassifierReadDto(null, "нет", propertyService.findById(propertyId).orElseThrow()));
+        result.addAll(stringClassifierRepository.findByPropertyId(propertyId).stream().map(stringClassifierReadMapper::map).toList());
+        return result;
     }
 
     public Optional<StringClassifierReadDto> findById(Long id) {
@@ -57,5 +62,4 @@ public class StringClassifierService {
                 })
                 .orElse(false);
     }
-
 }

@@ -3,8 +3,8 @@
 --changeset dnsshop:1
 CREATE TABLE producer
 (
-    id          BIGSERIAL PRIMARY KEY,
-    name        VARCHAR(255)                    NOT NULL
+    id   BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
 );
 
 --changeset dnsshop:2
@@ -37,7 +37,7 @@ CREATE TABLE product
     model       VARCHAR(255),
     price       NUMERIC(19, 2)                  NOT NULL,
     producer_id BIGINT REFERENCES producer (id) NOT NULL,
-    count       INT                             NOT NULL,
+    count       INT DEFAULT 0,
     category_id BIGINT REFERENCES category (id) NOT NULL
 );
 
@@ -78,22 +78,45 @@ CREATE TABLE product_property
 );
 
 --changeset dnsshop:8
+create table basket
+(
+    id      BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users (id) NOT NULL,
+    sum     NUMERIC(19, 2) DEFAULT 0,
+    count   INT            DEFAULT 0
+);
+
+--changeset dnsshop:9
+create table basket_product
+(
+    id         BIGSERIAL PRIMARY KEY,
+    count      INT            DEFAULT 0,
+    basket_id  BIGINT REFERENCES basket (id)  NOT NULL,
+    product_id BIGINT REFERENCES product (id) NOT NULL,
+    sum        NUMERIC(19, 2) DEFAULT 0,
+    is_active  BOOLEAN        DEFAULT true,
+    UNIQUE (basket_id, product_id)
+);
+
+--changeset dnsshop:10
 create table orders
 (
     id           BIGSERIAL PRIMARY KEY,
     created_at   TIMESTAMP                    NOT NULL,
-    updated_at   TIMESTAMP                    NOT NULL,
-    sum          NUMERIC(19, 2)               NOT NULL,
+    updated_at   TIMESTAMP,
+    count        INT            DEFAULT 0,
+    sum          NUMERIC(19, 2) DEFAULT 0,
     user_id      BIGINT REFERENCES users (id) NOT NULL,
     order_status VARCHAR(128)                 NOT NULL
 );
 
---changeset dnsshop:9
-create table product_order
+--changeset dnsshop:11
+create table order_product
 (
     id         BIGSERIAL PRIMARY KEY,
-    count      INT                            NOT NULL,
+    count      INT            DEFAULT 0,
     order_id   BIGINT REFERENCES orders (id)  NOT NULL,
     product_id BIGINT REFERENCES product (id) NOT NULL,
-    UNIQUE (product_id, order_id)
+    sum        NUMERIC(19, 2) DEFAULT 0,
+    UNIQUE (order_id, product_id)
 );

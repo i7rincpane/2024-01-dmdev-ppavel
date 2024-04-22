@@ -7,5 +7,4 @@ import java.util.List;
 public interface CustomPropertyRepository {
 
     List<PropertyFilterReadDto> findAllWithCountProductProperty(Long categoryId);
-
 }

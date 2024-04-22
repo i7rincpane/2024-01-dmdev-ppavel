@@ -12,11 +12,14 @@
 </head>
 <body>
 <div class="container">
+    <div th:insert="~{fragment :: header}"></div>
     <div class="row">
-        <h6><span><a href="/catalogs">Каталог</a></span>
-            <span th:each="pathElement : ${pathElements}"><a th:if="pathElement.parentId!=null"
-                                                             th:href="@{'/catalogs/' + ${pathElement.parentId!=null?pathElement.parentId:pathElement.id}}"
-                                                             th:text="|/${pathElement.name}|"></a></span></h6>
+        <div class="col">
+            <h6><span><a href="/catalogs">Каталог</a></span>
+                <span th:each="pathElement : ${pathElements}"><a th:if="pathElement.parentId!=null"
+                                                                 th:href="@{'/catalogs/' + ${pathElement.parentId!=null?pathElement.parentId:pathElement.id}}"
+                                                                 th:text="|/${pathElement.name}|"></a></span></h6>
+        </div>
     </div>
     <div class="row">
         <div class="col-sm">
@@ -30,6 +33,12 @@
         <br>
         <div class="row">
             <div class="col-sm">
+                <div class="row">
+                    <div class="col-sm">
+                        <a th:href="@{/catalogs/{parentId}/properties/create-form(parentId=${parentId})}">Добавить
+                            свойство</a>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-sm">
                         <form th:action="@{'/catalogs/' + ${parentId}}" th:object="${productFilter}">
@@ -55,11 +64,12 @@
                             <br>
                             <div th:each="property : ${properties}">
 
-                                <a class="font-weight-bold" th:href="@{'/properties/'+ ${property.id}}" th:text="|${property.name} ${property.unit!=null?(property.unit):''}|"></a>
-<!--                                <label class="font-weight-bold"-->
-<!--                                       th:text="|${property.name} ${property.unit!=null?(property.unit):''}|">Property-->
-<!--                                    Name(unit)-->
-<!--                                </label>-->
+                                <a class="font-weight-bold" th:href="@{'/properties/'+ ${property.id}}"
+                                   th:text="|${property.name} ${property.unit!=null?(property.unit):''}|"></a>
+                                <!--                                <label class="font-weight-bold"-->
+                                <!--                                       th:text="|${property.name} ${property.unit!=null?(property.unit):''}|">Property-->
+                                <!--                                    Name(unit)-->
+                                <!--                                </label>-->
                                 <div th:if="${property.dtype.name=='NUMBER'}"
                                      th:with="maxValue=${T(ru.nvkz.util.StreamMapper).mapToMaxIntegerValue(property.numberValueCounts.keySet().stream())}, minValue=${T(ru.nvkz.util.StreamMapper).mapToMinIntegerValue(property.numberValueCounts.keySet().stream())}">
                                     <input th:placeholder="'от ' + ${minValue}" th:min="${minValue}"
@@ -101,18 +111,21 @@
                         </form>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm">
-                        <form th:action="@{/catalogs/{parentId}/properties/create-form(parentId=${parentId})}">
-                            <button type="submit">Добавить свойство</button>
-                        </form>
-                    </div>
-                </div>
             </div>
             <div class="col-sm">
-                <div th:each="product : ${products}">
-                    <a th:href="@{'/products/' + ${product.id}}"
-                       th:text="|${product.id}. ${product.name}|">User</a>
+                <div class="row">
+                    <div class="col-sm">
+                        <a th:href="@{/catalogs/{parentId}/products/create-form(parentId=${parentId})}">Добавить
+                            продукт</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <div th:each="product : ${products}">
+                            <a th:href="@{'/products/' + ${product.id}}"
+                               th:text="|${product.id}. ${product.name}|">User</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

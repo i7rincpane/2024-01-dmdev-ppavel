@@ -11,11 +11,6 @@ class ProductPropertyServiceIT extends IntegrationTestBase {
 
     @Test
     void findByProductId() {
-//        var values = service.findByProductId(1L);
-//        System.out.println();
-//        System.out.println(values.size());
-//        System.out.println();
-//        values.forEach(System.out::println);
     }
 
 

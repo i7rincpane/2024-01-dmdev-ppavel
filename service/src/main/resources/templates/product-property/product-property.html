@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Свойство продукта</title>
+</head>
+<body>
+<form th:action="@{/product-properties/{id}/update(id=${productProperty.id})}" method="post"
+      th:object="${productProperty}">
+
+    <p th:if="${productProperty.property.dtype.name!='STRING_CLASSIFIER'}" class="font-weight-bold"
+       th:text="|${productProperty.property.getName()}|"></p>
+
+    <input hidden="true" name="productId"
+           type="text"
+           th:value="${productProperty.product.id}">
+
+    <input hidden="true" name="propertyId"
+           type="text"
+           th:value="${productProperty.property.id}">
+
+    <div th:if="${productProperty.property.dtype.name=='TEXT'}">
+        <input name="textValue"
+               type="text"
+               th:value="${productProperty.textValue}">
+    </div>
+    <div th:if="${productProperty.property.dtype.name=='NUMBER'}">
+
+        <input name="numberValue"
+               type="number"
+               th:value="${productProperty.numberValue}">
+
+    </div>
+    <div th:if="${productProperty.property.dtype.name=='FLOAT'}">
+
+        <input name="floatValue"
+               type="number"
+               th:value="${productProperty.floatValue}"
+               step="0.01">
+    </div>
+    <div th:if="${productProperty.property.dtype.name=='STRING_CLASSIFIER'}">
+
+        <a class="font-weight-bold"
+           th:href="@{'/properties/'+ ${productProperty.property.id}+'/string-classifiers'}"
+           th:text="|${productProperty.property.getName()}|"></a>
+        <br>
+        <select name="stringClassifierId">
+            <option th:each="stringClassifier: ${stringClassifiers}"
+                    th:value="${stringClassifier.id}"
+                    th:text="|${stringClassifier.id}. ${stringClassifier.name}|"></option>
+        </select>
+    </div>
+    <br>
+
+    <button type="submit">Update</button>
+</form>
+<form th:action="@{/product-properties/{id}/delete(id=${productProperty.id})}" method="post">
+    <input hidden="false" type="text" name="productId" th:value="*{productProperty.product.id}">
+    <button type="submit">Remove</button>
+</form>
+
+</body>
+</html>

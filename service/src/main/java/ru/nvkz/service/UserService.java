@@ -6,12 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.nvkz.dto.BasketCreateEditDto;
+import ru.nvkz.dto.BasketReadDto;
 import ru.nvkz.dto.UserCreateEditDto;
+import ru.nvkz.dto.UserDetails;
 import ru.nvkz.dto.UserReadDto;
 import ru.nvkz.entity.PersonalInfo;
 import ru.nvkz.entity.PersonalInfo_;
@@ -23,6 +25,7 @@ import ru.nvkz.mapper.UserReadMapper;
 import ru.nvkz.repository.CPredicate;
 import ru.nvkz.repository.UserRepository;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +33,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserService  implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserReadMapper userReadMapper;
     private final UserCreateEditMapper userCreateEditMapper;
+    private final BasketService basketService;
 
     public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
         Specification<User> specification = (root, cq, cb) -> {
@@ -63,11 +67,13 @@ public class UserService  implements UserDetailsService {
 
     @Transactional
     public UserReadDto create(UserCreateEditDto userDto) {
-        return Optional.of(userDto)
+        UserReadDto user = Optional.of(userDto)
                 .map(userCreateEditMapper::map)
                 .map(userRepository::save)
                 .map(userReadMapper::map)
                 .orElseThrow();
+        basketService.create(this.buildDefaultBasket(user));
+        return user;
     }
 
     @Transactional
@@ -91,12 +97,21 @@ public class UserService  implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username).map(user -> new org.springframework.security.core.userdetails.User(
+        return userRepository.findByEmail(username).map(user -> new UserDetails(
+                        user.getId(),
                         user.getEmail(),
                         user.getPassword(),
                         Collections.singleton(user.getRole())
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user: " + username));
 
+    }
+
+    private BasketCreateEditDto buildDefaultBasket(UserReadDto user) {
+        return BasketCreateEditDto.builder()
+                .userId(user.getId())
+                .count(0)
+                .sum(new BigDecimal(0))
+                .build();
     }
 }

@@ -2,8 +2,6 @@ package ru.nvkz.util;
 
 import lombok.experimental.UtilityClass;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -25,5 +23,4 @@ public class StreamMapper {
     public static Integer mapToMinIntegerValue(Stream<Integer> stream) {
         return stream.filter(Objects::nonNull).mapToInt(Integer::valueOf).min().orElse(0);
     }
-
 }

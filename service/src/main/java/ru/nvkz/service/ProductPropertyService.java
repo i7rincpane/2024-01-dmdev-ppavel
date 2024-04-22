@@ -5,11 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nvkz.dto.ProductPropertyCreateEditDto;
 import ru.nvkz.dto.ProductPropertyReadDto;
-import ru.nvkz.dto.PropertyReadDto;
+import ru.nvkz.entity.ProductProperty;
 import ru.nvkz.mapper.ProductPropertyCreateEditMapper;
 import ru.nvkz.mapper.ProductPropertyReadMapper;
 import ru.nvkz.repository.ProductPropertyRepository;
-import ru.nvkz.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +18,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProductPropertyService {
+
     private final ProductPropertyRepository productPropertyRepository;
     private final ProductPropertyReadMapper productPropertyReadMapper;
-    private final PropertyService propertyService;
+
     private final ProductPropertyCreateEditMapper productPropertyCreateEditMapper;
 
 
@@ -58,28 +58,23 @@ public class ProductPropertyService {
                 .orElse(false);
     }
 
+    public List<ProductPropertyReadDto> findByProductId(Long productId) {
+        List<ProductProperty> productProperties = productPropertyRepository.findByProductId(productId);
+        return productProperties
+                .stream()
+                .map(productPropertyReadMapper::map)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
-    public List<ProductPropertyReadDto> findByProductIdAndCreateNewProperties(Long productId) {
-        List<ProductPropertyReadDto> productPropertyValues = productPropertyRepository.findByProductId(productId).stream().map(productPropertyReadMapper::map).collect(Collectors.toList());
-        checkAndCreateNewProductProperty(productPropertyValues);
-        return productPropertyValues;
+    public List<ProductPropertyReadDto> updateAll(List<ProductPropertyCreateEditDto> productProperties) {
+        return productProperties.stream().map(productProperty -> this.update(productProperty.getId(), productProperty)).map(Optional::orElseThrow).toList();
     }
 
-    private void checkAndCreateNewProductProperty(List<ProductPropertyReadDto> productPropertyValues) {
-        productPropertyValues.stream().findFirst().ifPresent(
-                (productProperty) -> {
-                    CollectionUtils.merge(productPropertyValues, propertyService.findByCategoryId(productProperty.getProduct().getCategory().getId()),
-                            this::isEqualsPropertyId,
-                            (newProperty) -> this.create(ProductPropertyCreateEditDto.builder()
-                                    .propertyId(newProperty.getId())
-                                    .productId(productProperty.getId())
-                                    .build())
-                    );
-                });
-    }
 
-    private boolean isEqualsPropertyId(PropertyReadDto property, ProductPropertyReadDto productPropertyValue) {
-        return property.getId().equals(productPropertyValue.getProperty().getId());
+    @Transactional
+    public List<ProductPropertyReadDto> createAll(List<ProductPropertyCreateEditDto> productPropertis) {
+        List<ProductProperty> result = productPropertyRepository.saveAll(productPropertis.stream().map(productPropertyCreateEditMapper::map).collect(Collectors.toList()));
+        return result.stream().map(productPropertyReadMapper::map).collect(Collectors.toList());
     }
-
 }

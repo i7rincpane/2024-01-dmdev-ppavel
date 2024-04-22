@@ -16,12 +16,12 @@ public class UserReadMapper implements Mapper<User, UserReadDto> {
         return new UserReadDto(
                 object.getId(),
                 object.getEmail(),
-                personalInfo.getBirthDate(),
-                personalInfo.getName(),
-                personalInfo.getSurname(),
-                personalInfo.getPatronimic(),
+                getField(personalInfo, PersonalInfo::getBirthDate),
+                getField(personalInfo, PersonalInfo::getName),
+                getField(personalInfo, PersonalInfo::getSurname),
+                getField(personalInfo, PersonalInfo::getPatronimic),
                 object.getRole(),
-                personalInfo.getTelephone()
+                getField(personalInfo, PersonalInfo::getTelephone)
         );
     }
 }

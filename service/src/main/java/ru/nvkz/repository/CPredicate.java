@@ -25,6 +25,15 @@ public class CPredicate {
         return new CPredicate();
     }
 
+    public CPredicate add(Predicate predicate) {
+
+        if (predicate != null) {
+            predicates.add(predicate);
+        }
+
+        return this;
+    }
+
     public CPredicate add(String param, Function<String, Predicate> function) {
 
         if (!StringUtils.isEmpty(param)) {
@@ -34,6 +43,7 @@ public class CPredicate {
         return this;
     }
 
+
     public <T> CPredicate add(T param, Function<T, Predicate> function) {
         if (param != null) {
             predicates.add(function.apply(param));
@@ -42,8 +52,12 @@ public class CPredicate {
         return this;
     }
 
-    public <T> CPredicate addIf(T param, Function<T, Predicate> function, boolean is) {
+    public <T> CPredicate add(T param, Function<T, Predicate> function, boolean is) {
         return is ? this.add(param, function) : this;
+    }
+
+    public <T> CPredicate add(Predicate predicate, boolean is) {
+        return is ? this.add(predicate) : this;
     }
 
     public <T> CPredicate add(Collection<T> objects, Function<Collection<T>, Predicate> function) {
@@ -63,7 +77,9 @@ public class CPredicate {
     }
 
     public <Y, T> CPredicate add(Map<Y, T> map1, Map<Y, T> map2, TriFunction<T, T, Y, Predicate> function) {
-        if (isEmpty(map1) || isEmpty(map2)) return this;
+        if (isEmpty(map1) || isEmpty(map2)) {
+            return this;
+        }
 
         for (Map.Entry<Y, T> entry : map2.entrySet()) {
             T value1 = map1.get(entry.getKey());
@@ -78,7 +94,9 @@ public class CPredicate {
     }
 
     public <Y, T> CPredicate add(Map<Y, List<T>> map, BiFunction<List<T>, Y, Predicate> function) {
-        if (isEmpty(map)) return this;
+        if (isEmpty(map)) {
+            return this;
+        }
 
         for (Map.Entry<Y, List<T>> entry : map.entrySet()) {
             if (entry.getValue() != null && !entry.getValue().isEmpty()) {

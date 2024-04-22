@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(exclude = {"productPropertyValues"})
+@ToString(exclude = {"productProperties"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

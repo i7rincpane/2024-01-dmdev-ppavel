@@ -1,5 +1,6 @@
 package ru.nvkz.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,8 +16,10 @@ import static ru.nvkz.entity.Role.ADMIN;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final CustomAuthenticationSuccessHandler mySimpleUrlAuthenticationSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -31,14 +34,14 @@ public class SecurityConfig {
                                 .requestMatchers("/login", "/users/registration", "/v3/api-docs/**", "/swagger-ui/**")
                                 .permitAll()
                                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                                // TODO: ругается на regex
                                 // .requestMatchers("/users/{\\d+}/delete").hasAnyRole(ADMIN.getAuthority())
                                 .requestMatchers("/properties/**").hasAuthority(ADMIN.getAuthority())
                                 .requestMatchers("/string-classifiers/**").hasAuthority(ADMIN.getAuthority())
                                 .anyRequest().authenticated())
                 .formLogin(login -> login
                         .loginPage("/login")
-                        .defaultSuccessUrl("/catalogs"));
+                        .successHandler(mySimpleUrlAuthenticationSuccessHandler)
+                );
         return http.build();
     }
 

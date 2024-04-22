@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @Component
@@ -57,8 +56,7 @@ public class PropertyReadDtoExtractor implements ResultSetExtractor<List<Propert
                 .numberValueCounts(createNewValueCounts(rs.getInt("number_value")))
                 .floatValueCounts(createNewValueCounts(rs.getDouble("float_value")))
                 .dateValueCounts(createNewValueCounts(rs.getTimestamp("date_value"), Timestamp::toInstant))
-                .stringClassifierValueCounts(createNewValueCounts(rs.getLong("string_classifier_id"), rs.getString("string_classifier_name"),
-                        (id, name) -> new StringClassifierReadDto(id, name, null)))
+                .stringClassifierValueCounts(createNewValueCounts(rs.getLong("string_classifier_id"), rs.getString("string_classifier_name")))
                 .booleanValueCounts(createNewValueCounts(rs.getBoolean("boolean_value")))
                 .build();
     }
@@ -71,10 +69,12 @@ public class PropertyReadDtoExtractor implements ResultSetExtractor<List<Propert
         return result;
     }
 
-    private static <T, R, O> Map<T, Integer> createNewValueCounts(R object, O object2, BiFunction<R, O, T> mapper) {
-        Map<T, Integer> result = new HashMap<>();
-        if (object != null && object2 != null) {
-            result.put(mapper.apply(object, object2), 1);
+    private static Map<StringClassifierReadDto, Integer> createNewValueCounts(Long object, String object2) {
+        Map<StringClassifierReadDto, Integer> result = new HashMap<>();
+        if (object == 0 && object2 == null) {
+            result.put(new StringClassifierReadDto(object, "нет", null), 1);
+        } else {
+            result.put(new StringClassifierReadDto(object, object2, null), 1);
         }
         return result;
     }

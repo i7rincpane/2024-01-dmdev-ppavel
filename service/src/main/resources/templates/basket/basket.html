@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div th:insert="~{fragment :: header-empty}"></div>
+    <div th:insert="~{fragment:: main-menu}"></div>
+    <div>
+        <br>
+        <div class="row">
+
+            <div class="col-10">
+
+                <form th:each="basketProduct : ${basketProducts}"
+                      th:action="@{/basket-products/{basketProductId}/update(basketProductId=${basketProduct.id})}"
+                      method="post" th:object="${basketProduct}">
+                    <div class="form-row">
+                        <div class="form-group col-8">
+                            <div class="form-row">
+                                <input id="isActive" type="checkbox"
+                                       name="isActive"
+                                       th:checked="${basketProduct.isActive}" onchange="this.form.submit()">
+                                <label style="margin-left:5px;" for="isActive"
+                                       th:text="|${basketProduct.product.name}|">BasketProductId:
+                                </label>
+                            </div>
+                            <div class="form-row align-self-top">
+                                <p style="font-size: x-small;"
+                                   th:text="|Артикул: ${basketProduct.product.code}|"></p>
+                            </div>
+                        </div>
+                        <div class="form-group col-2">
+                            <div class="form-row">
+                                <input hidden="true"
+                                       name="productId"
+                                       type="number"
+                                       th:value="${basketProduct.product.id}">
+                                <input hidden="true"
+                                       name="basketId"
+                                       type="number"
+                                       th:value="${basketProduct.basket.id}">
+                                <input style="width: 80%;" id="count" type="number"
+                                       name="count"
+                                       onchange="this.form.submit()"
+                                       th:value="${basketProduct.count}">
+                            </div>
+                            <div class="form-row">
+                                <p style="font-size:x-small;" for="count"
+                                   th:text="|${basketProduct.product.price} р/шт|">
+                                </p>
+                            </div>
+
+                        </div>
+                        <div class="form-group col-2">
+                            <p th:text="|${basketProduct.sum}руб.|"></p>
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="col-2">
+                <div class="row">
+                    <h1>Ваш заказ</h1>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <p th:text="|Товары, ${basket.count} шт.|"></p>
+                    </div>
+                    <div class="col-sm">
+                        <p th:text="|${basket.sum} РУБ.|"></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm">
+                        <p>Скидки и акции</p>
+                    </div>
+                    <div class="col-sm">
+                        <p>0 РУБ.</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm">
+                        <p>Итого</p>
+                    </div>
+                    <div class="col-sm">
+                        <p th:text="|${basket.sum} РУБ.|"></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <form th:action="@{/orders/create-form}">
+                        <input hidden="true"
+                               name="basketId"
+                               type="number"
+                               th:value="${basket.id}">
+                        <button type="submit">Перейти к оформлению</button>
+                    </form>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,6 +33,7 @@ public class Order implements BaseEntity<Long> {
     private User user;
     private Instant createdAt;
     private Instant updatedAt;
+    private Integer count;
     private BigDecimal sum;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;

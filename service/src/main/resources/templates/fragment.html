@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fragments</title>
+</head>
+<body>
+<body>
+<div th:fragment="main-menu">
+    <div class="row">
+        <div class="col">
+            <h6><span><a href="/catalogs" th:text="#{main-menu.link.catalog}">Каталог</a></span></h6>
+        </div>
+    </div>
+</div>
+<div th:fragment="header-empty">
+    <div style="border-bottom: 2px solid orange; margin-bottom: 0.5cm;" class="row">
+        <div class="col">
+            <h1 style="color:orange">DNS</h1>
+        </div>
+        <div th:insert="~{fragment:: locale}" class="col-auto align-self-center"></div>
+    </div>
+
+</div>
+<div th:fragment="header">
+    <div style="border-bottom: 2px solid orange; margin-bottom: 0.5cm;" class="row">
+        <div class="col">
+            <h1 style="color:orange">DNS</h1>
+        </div>
+        <div th:insert="~{fragment:: locale}" class="col-auto align-self-center"></div>
+        <div class="col-auto align-self-center">
+            <a th:href="@{'/users/' + ${#authentication.principal.id}}"
+               th:text="${#authentication.principal.username}"></a>
+        </div>
+        <div class="col-auto align-self-center">
+            <a th:href="@{'/baskets/' + ${session.basket.id}}"
+               th:text="|#{header.link.basket} (${session.basket.count})|"></a>
+        </div>
+    </div>
+</div>
+<div th:fragment="profile-menu">
+    <div class="row">
+        <div class="col-sm">
+            <a th:href="@{'/users/' + ${#authentication.principal.id}}" th:text="#{profile-menu.link.personal-info}">Мои
+                данные</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <a th:href="@{'/orders/user-orders'}" th:text="#{profile-menu.link.orders}">Мои заказы</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <a th:href="@{'/logout'}" th:text="#{profile-menu.link.logout}">Выйти</a>
+        </div>
+    </div>
+</div>
+<div th:fragment="locale">
+    <form action="">
+        <select name="lang" onchange="this.form.submit()">
+            <option></option>
+            <option value="ru">RU</option>
+            <option value="en">EN</option>
+        </select>
+    </form>
+</div>
+</body>
+
+</body>
+</html>
+

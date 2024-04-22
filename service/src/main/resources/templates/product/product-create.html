@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Создание продукта</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <form action="/products" method="post" th:object="${product}">
+
+                <input hidden="true" name="categoryId"
+                       type="number"
+                       th:value="${categoryId}">
+
+                <div>
+                    <label for="code">Код:
+                        <input id="code" type="number" name="code" th:value="*{code}">
+                    </label><br>
+                </div>
+                <br>
+                <div>
+                    <label for="producer">Производитель:
+                        <select id="producer" name="producerId">
+                            <option th:each="producer : ${producers}"
+                                    th:value="${producer.id}"
+                                    th:selected="${producer.id == product.producerId}"
+                                    th:text="${producer.name}"></option>
+                        </select>
+                    </label><br>
+                </div>
+                <br>
+                <div>
+                    <label for="model">Модель:
+                        <input id="model" type="text" name="model" th:value="*{model}">
+                    </label>
+                </div>
+                <br>
+                <div>
+                    <label for="price">Цена:
+                        <input id="price" type="number" name="price" step="0.01" th:value="*{price}">
+                    </label></div>
+                <br>
+                <div>
+                    <label for="count">Количество:
+                        <input id="count" name="count"
+                               type="number"
+                               th:value="*{count}">
+                    </label></div>
+                <br>
+
+                <button type="submit">Создать</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

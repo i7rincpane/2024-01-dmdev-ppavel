@@ -31,6 +31,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CustomProductRepositoryImpl implements CustomProductRepository {
 
+    public static final Long MISSING_VALUE = 0L;
     private final EntityManager entityManager;
 
     public List<Product> findAllDistinctByProductFilter(ProductFilter productFilter, Long categoryId) {
@@ -42,7 +43,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
         Join<Product, Producer> producer = (Join<Product, Producer>) product.fetch(Product_.producer);
         Join<Product, Category> category = (Join<Product, Category>) product.fetch(Product_.category);
         Join<Category, Category> categoryParent = (Join<Category, Category>) category.fetch(Category_.parent);
-        ListJoin<Product, ProductProperty> productProperties = product.join(Product_.productProperties);
+        ListJoin<Product, ProductProperty> productProperties = product.join(Product_.productProperties, JoinType.LEFT);
         Join<ProductProperty, Property> property = productProperties.join(ProductProperty_.property, JoinType.LEFT);
         Join<ProductProperty, StringClassifier> stringClassifier = productProperties.join(ProductProperty_.stringClassifier, JoinType.LEFT);
 
@@ -58,8 +59,8 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                         (value1, value2, key) ->
                                 cb.and(CPredicate.builder()
                                         .add(value1, value2, (param1, param2) -> cb.between(productProperties.get(ProductProperty_.NUMBER_VALUE), param1, param2))
-                                        .addIf(value2, param -> cb.lessThan(productProperties.get(ProductProperty_.NUMBER_VALUE), param), Objects.isNull(value1))
-                                        .addIf(value1, param -> cb.greaterThan(productProperties.get(ProductProperty_.NUMBER_VALUE), param), Objects.isNull(value2))
+                                        .add(value2, param -> cb.lessThan(productProperties.get(ProductProperty_.NUMBER_VALUE), param), Objects.isNull(value1))
+                                        .add(value1, param -> cb.greaterThan(productProperties.get(ProductProperty_.NUMBER_VALUE), param), Objects.isNull(value2))
                                         .add(key, param -> cb.equal(property.get(Property_.ID), param))
                                         .build())
                 )
@@ -68,19 +69,23 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                         (value1, value2, key) ->
                                 cb.and(CPredicate.builder()
                                         .add(value1, value2, (param1, param2) -> cb.between(productProperties.get(ProductProperty_.FLOAT_VALUE), param1, param2))
-                                        .addIf(value2, param -> cb.lessThan(productProperties.get(ProductProperty_.FLOAT_VALUE), param), Objects.isNull(value1))
-                                        .addIf(value1, param -> cb.greaterThan(productProperties.get(ProductProperty_.FLOAT_VALUE), param), Objects.isNull(value2))
+                                        .add(value2, param -> cb.lessThan(productProperties.get(ProductProperty_.FLOAT_VALUE), param), Objects.isNull(value1))
+                                        .add(value1, param -> cb.greaterThan(productProperties.get(ProductProperty_.FLOAT_VALUE), param), Objects.isNull(value2))
                                         .add(key, param -> cb.equal(property.get(Property_.ID), param))
                                         .build())
                 )
                 .add(productFilter.getPropertyIdStringClassifierIds(),
                         (paramInMap, key) ->
                                 cb.and(CPredicate.builder()
-                                        .add(paramInMap, param -> stringClassifier.get(StringClassifier_.ID).in(paramInMap))
+                                        .add(cb.or(CPredicate.builder()
+                                                .add(paramInMap.stream().filter((value) -> value != MISSING_VALUE).toList(), param -> stringClassifier.get(StringClassifier_.ID).in(paramInMap))
+                                                .add(cb.isNull(stringClassifier.get(StringClassifier_.ID)), paramInMap.stream().anyMatch((value) -> value.equals(MISSING_VALUE)))
+                                                .build()))
                                         .add(key, param -> cb.equal(property.get(Property_.ID), param))
                                         .build())
                 ).build();
 
+        //  .add(Collections.replaceAll(paramInMap, 0L, null), param -> stringClassifier.get(StringClassifier_.ID).in(paramInMap))
         cq.select(product)
                 .where(cb.and(cb.and(productPredicates),
                         propertyPredicates.length != 0 ? cb.or(propertyPredicates) : cb.and()))

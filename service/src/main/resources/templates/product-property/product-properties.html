@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Свойство продукта</title>
+</head>
+<body>
+<form action="/product-properties" method="post">
+
+    <input hidden="true" name="productId"
+           type="text"
+           th:value="${productId}">
+
+    <div th:each="propertie : ${properties}">
+        <input type="checkbox"
+               name="properties"
+               th:value="${propertie.id}">
+        <label th:text="${propertie.getName()}"></label>
+    </div>
+
+    <br>
+
+    <button type="submit">Создать</button>
+</form>
+
+</body>
+</html>

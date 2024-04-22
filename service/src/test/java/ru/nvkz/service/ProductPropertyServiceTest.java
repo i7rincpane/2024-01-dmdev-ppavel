@@ -20,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 class ProductPropertyServiceTest {
 
-
     @Test
     void checkAndAddNewProperty() {
 
@@ -53,10 +52,10 @@ class ProductPropertyServiceTest {
         ProductPropertyService service = new ProductPropertyService(
                 productPropertyRepository,
                 productPropertyReadMapper,
-                propertyService,
+                //           propertyService,
                 null);
 
-        var values = service.findByProductIdAndCreateNewProperties(1L);
+        var values = service.findByProductId(1L);
         System.out.println();
         System.out.println(values.size());
         System.out.println();
@@ -70,8 +69,8 @@ class ProductPropertyServiceTest {
                         .build())
                 .property(
                         PropertyReadDto.builder()
-                                        .id(propertyId)
-                                        .build()
+                                .id(propertyId)
+                                .build()
                 )
                 .build();
     }
@@ -86,6 +85,5 @@ class ProductPropertyServiceTest {
                 )
                 .build();
     }
-
 
 }

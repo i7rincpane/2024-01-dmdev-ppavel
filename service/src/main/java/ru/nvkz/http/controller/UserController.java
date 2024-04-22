@@ -24,6 +24,8 @@ import ru.nvkz.filter.UserFilter;
 import ru.nvkz.service.UserService;
 import ru.nvkz.validation.group.CreateAction;
 
+import java.util.Locale;
+
 @Controller
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -41,11 +43,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable("id") Long id, Model model) {
+    public String findById(@PathVariable("id") Long id, Model model, Locale locale) {
+        System.out.println(Role.values());
         return userService.findById(id)
                 .map(user -> {
                     model.addAttribute("user", user);
-                    model.addAttribute("roles", Role.values());
+                    model.addAttribute("roles", Role.values(locale));
                     return "user/user";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -56,6 +59,13 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("roles", Role.values());
         return "user/registration";
+    }
+
+    @GetMapping("/profile")
+    public String profile(Model model, @ModelAttribute("user") UserCreateEditDto user) {
+        model.addAttribute("user", user);
+        model.addAttribute("roles", Role.values());
+        return "user/user";
     }
 
     @PostMapping

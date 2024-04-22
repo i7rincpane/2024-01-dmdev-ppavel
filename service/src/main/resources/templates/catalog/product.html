@@ -2,65 +2,125 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Личный кабинет</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
 </head>
 <body>
-
 <div class="container">
+    <div th:insert="~{fragment :: header}"></div>
+    <div class="row">
+        <div class="col-sm">
+            <a th:href="@{/products/{productId}/product-properties/create-form(productId=${productRead.id})}">Добавить
+                свойство</a>
+        </div>
+        <div class="col-sm">
+            <form th:action="@{/basket-products}" method="post" th:object="${productRead}">
+                <input hidden="true"
+                       name="productId"
+                       type="number"
+                       th:value="${productRead.id}">
+                <input hidden="true"
+                       name="basketId"
+                       type="number"
+                       th:value="${session.basket.id}">
+                <button type="submit">Купить</button>
+            </form>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm">
             <form th:action="@{/products/{productId}/update(productId=${productRead.id})}" method="post"
                   th:object="${productRead}">
-                <p th:text="|Название: ${productRead.getName()}|"></p>
-                <p th:text="|Количество: ${productRead.getCount()}|"></p>
-                <p th:text="|Тип продукта: ${productRead.getCategory().getName()}|"></p>
-                <label for="code">Код:
-                    <input id="code" type="number" name="code" th:value="*{code}">
-                </label><br>
-                <label for="model">Модель:
-                    <input id="model" type="text" name="model" th:value="*{model}">
-                </label><br>
-                <label for="price">Цена:
-                    <input id="price" type="number" name="price" step="0.01" th:value="*{price}">
-                </label><br>
-                <label for="producer">Производитель:
-                    <select id="producer" name="producerId">
-                        <option th:each="producer : ${producers}"
-                                th:value="${producer.id}"
-                                th:selected="${producer.id == productRead.producer.id}"
-                                th:text="${producer.name}"></option>
-                    </select>
-                </label>
-                <div th:each="productProperty : ${productProperties}">
-                    <p th:if="${productProperty.property.dtype.name!='STRING_CLASSIFIER'}" class="font-weight-bold"
-                       th:text="|${productProperty.property.getName()}|"></p>
+                <div>
+                    <p th:text="|Название: ${productRead.getName()}|"></p>
+                </div>
+                <div>
+                    <p th:text="|Тип продукта: ${productRead.getCategory().getName()}|"></p>
+                </div>
+                <div>
+                    <label for="count">Количество:
+                        <input id="count" type="number" name="count" th:value="*{count}">
+                    </label>
+                </div>
+                <br>
+                <div>
+                    <label for="code">Код:
+                        <input id="code" type="number" name="code" th:value="*{code}">
+                    </label>
+                </div>
+                <br>
+                <div>
+                    <label for="model">Модель:
+                        <input id="model" type="text" name="model" th:value="*{model}">
+                    </label>
+                </div>
+                <br>
+                <div>
+                    <label for="price">Цена:
+                        <input id="price" type="number" name="price" step="0.01" th:value="*{price}">
+                    </label>
+                </div>
+                <br>
+                <div>
+                    <label for="producer">Производитель:
+                        <select id="producer" name="producerId">
+                            <option th:each="producer : ${producers}"
+                                    th:value="${producer.id}"
+                                    th:selected="${producer.id == productRead.producer.id}"
+                                    th:text="${producer.name}"></option>
+                        </select>
+                    </label>
+                </div>
+                <br>
+                <div th:each="productProperty , itemStat : ${productProperties}">
+                    <a class="font-weight-bold"
+                       th:href="@{'/product-properties/'+ ${productProperty.id}}"
+                       th:text="|${productProperty.property.getName()}|"></a>
+                    <div>
+                        <input hidden="true"
+                               th:field="${productCreateEdit.productProperties['__${itemStat.index}__'].id}"
+                               type="text"
+                               th:value="${productProperty.id}">
+                    </div>
+                    <div>
+                        <input hidden="true"
+                               th:field="${productCreateEdit.productProperties['__${itemStat.index}__'].productId}"
+                               type="text"
+                               th:value="${productProperty.product.id}">
+                    </div>
+                    <div>
+                        <input hidden="true"
+                               th:field="${productCreateEdit.productProperties['__${itemStat.index}__'].propertyId}"
+                               type="text"
+                               th:value="${productProperty.property.id}">
+                    </div>
 
                     <div th:if="${productProperty.property.dtype.name=='TEXT'}">
-                        <input th:field="${productCreateEdit.propertyIdTextValue['__${productProperty.property.id}__']}"
+                        <input th:field="${productCreateEdit.productProperties['__${itemStat.index}__'].textValue}"
                                type="text"
                                th:value="${productProperty.textValue}">
                     </div>
                     <div th:if="${productProperty.property.dtype.name=='NUMBER'}">
 
-                        <input th:field="${productCreateEdit.propertyIdNumberValue['__${productProperty.property.id}__']}"
+                        <input th:field="${productCreateEdit.productProperties['__${itemStat.index}__'].numberValue}"
                                type="number"
                                th:value="${productProperty.numberValue}">
+
                     </div>
                     <div th:if="${productProperty.property.dtype.name=='FLOAT'}">
 
-                        <input th:field="${productCreateEdit.propertyIdFloatValue['__${productProperty.property.id}__']}"
+                        <input th:field="${productCreateEdit.productProperties['__${itemStat.index}__'].floatValue}"
                                type="number"
                                th:value="${productProperty.floatValue}"
                                step="0.01">
                     </div>
                     <div th:if="${productProperty.property.dtype.name=='STRING_CLASSIFIER'}">
-
-                        <a class="font-weight-bold"
-                           th:href="@{'/properties/'+ ${productProperty.property.id}+'/string-classifiers'}"
-                           th:text="|${productProperty.property.getName()}|"></a>
                         <br>
                         <select th:id="${productProperty.property.id}"
-                                th:field="${productCreateEdit.propertyIdStringClassifierId['__${productProperty.property.id}__']}">
+                                th:field="${productCreateEdit.productProperties['__${itemStat.index}__'].stringClassifierId}">
                             <option th:each="stringClassifier: ${propertyIdStringClassifiers.get(productProperty.property.id) }"
                                     th:value="${stringClassifier.id}"
                                     th:text="|${stringClassifier.id}. ${stringClassifier.name}|"></option>

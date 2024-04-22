@@ -1,13 +1,13 @@
 package ru.nvkz.dto;
 
+import lombok.Builder;
 import lombok.Value;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-
+@Builder
 @Value
 public class ProductCreateEditDto {
 
@@ -19,10 +19,5 @@ public class ProductCreateEditDto {
     Integer count;
     Long categoryId;
 
-    Map<Long, Long> propertyIdStringClassifierId = new HashMap<>();
-    Map<Long, Boolean> propertyIdBooleanValue = new HashMap<>();
-    Map<Long, Instant> propertyIdDateValue = new HashMap<>();
-    Map<Long, Double> propertyIdFloatValue = new HashMap<>();
-    Map<Long, Integer> propertyIdNumberValue = new HashMap<>();
-    Map<Long, String> propertyIdTextValue = new HashMap<>();
+    List<ProductPropertyCreateEditDto> productProperties = new ArrayList<>();
 }

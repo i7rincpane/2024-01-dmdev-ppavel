@@ -28,10 +28,9 @@ public class ProductPropertyReadDto<T> {
                         floatValue,
                         dateValue,
                         booleanValue,
-                        Optional.ofNullable(stringClassifier).map(StringClassifierReadDto::getId).orElse(null))
-                .stream().
-                filter(Objects::nonNull).
-                findFirst().orElse(null);
+                        Optional.ofNullable(stringClassifier).map(StringClassifierReadDto::getId).orElse(null)).stream()
+                .filter(Objects::nonNull)
+                .findFirst().orElse(null);
     }
 }
 

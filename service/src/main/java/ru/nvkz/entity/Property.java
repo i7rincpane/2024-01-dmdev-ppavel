@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ToString(exclude = {"productPropertyValues"})
+@ToString(exclude = {"productProperties"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -37,7 +37,7 @@ public class Property implements BaseEntity<Long> {
     private TypeValue dtype;
 
     @Builder.Default
-    @OneToMany(mappedBy = "property")
+    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY)
     private List<ProductProperty> productProperties = new ArrayList<>();
 
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{title.personal-area}">Личный кабинет</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div th:insert="~{fragment :: header-empty}"></div>
+    <div th:insert="~{fragment:: main-menu}"></div>
+    <div>
+        <br>
+        <div class="row">
+            <div class="col-2" th:insert="~{fragment :: profile-menu}"></div>
+            <div class="col-10">
+                <div th:each="order : ${orders}">
+                    <a th:href="@{'/order/' + ${order.id}}" th:text="|${order.id}. ${order.orderStatus.name()} ${order.sum} от ${order.createdAt}|">order</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

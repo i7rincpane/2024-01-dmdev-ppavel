@@ -8,7 +8,7 @@ import ru.nvkz.entity.Producer;
 import java.util.List;
 
 @Repository
-public interface ProducerRepository extends JpaRepository<Producer, Integer> {
+public interface ProducerRepository extends JpaRepository<Producer, Long> {
 
     @Query(value = "select producer from Producer producer " +
             "join producer.products p " +
