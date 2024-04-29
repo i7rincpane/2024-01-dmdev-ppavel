@@ -10,7 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
-class PropertyServiceTest extends IntegrationTestBase {
+class PropertyServiceIT extends IntegrationTestBase {
 
     private final PropertyService propertyService;
 

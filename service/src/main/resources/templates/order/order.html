@@ -1,10 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+    <meta charset="UTF-8">
+    <title>Личный кабинет</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
 </head>
 <body>
-
+<div class="container">
+    <div th:insert="~{fragment :: header}"></div>
+    <div class="row">
+        <h6><span><a href="/orders">К списку заказов</a></span></h6>
+    </div>
+    <div>
+        <br>
+        <div style="border-bottom: 1px solid #dcd8d8;" class="row">
+            <div class="col-sm">
+                <div class="row">
+                    <div class="col-11">
+                        <div class="row">
+                            <h5 th:text="|Заказ '№' ${order.id}  от ${#dates.format(order.createdAt, 'dd-MM-yyyy')}|"></h5>
+                        </div>
+                        <div class="row align-self-top">
+                            <p style="font-size: x-small;"
+                               th:text="|Статус: ${order.orderStatus.text}|"></p>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <div class="row">
+                            <h5 th:text="${order.sum}"></h5>
+                        </div>
+                        <div class="row align-self-top">
+                            <p style="font-size: x-small;"
+                               th:text="|Количество товаров: ${order.count}|"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="row">
+                    <h4>Товары в заказе</h4>
+                </div>
+                <div class="row" th:each="orderProduct : ${orderProducts}">
+                    <div class="col-sm">
+                        <div class="row">
+                            <a th:href="@{'/products/' + ${orderProduct.product.id}}"
+                               th:text="|${orderProduct.product.id}. ${orderProduct.product.name} ${order.count}  ${order.sum} Р|">order</a>
+                        </div>
+                        <div class="ow align-self-top">
+                            <p style="font-size: x-small;"
+                               th:text="|Артикул: ${orderProduct.product.code}|"></p>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div>
+                            <p style="font-size: x-small;"
+                               th:text="|${orderProduct.count} шт.|"></p>
+                        </div>
+                    </div>
+                    <div class="col-1">
+                        <div>
+                            <p style="font-size: x-small;"
+                               th:text="|${orderProduct.sum} Р|"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -1,10 +1,10 @@
 package ru.nvkz.dto;
 
 import lombok.Value;
+import ru.nvkz.entity.Basket;
 import ru.nvkz.entity.Role;
 
 import java.time.LocalDate;
-
 
 @Value
 public class UserReadDto {

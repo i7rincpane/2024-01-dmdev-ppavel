@@ -68,7 +68,7 @@ public class ProductPropertyService {
 
     @Transactional
     public List<ProductPropertyReadDto> updateAll(List<ProductPropertyCreateEditDto> productProperties) {
-        return productProperties.stream().map(productProperty -> this.update(productProperty.getId(), productProperty)).map(Optional::orElseThrow).toList();
+        return productProperties.stream().map(productProperty -> update(productProperty.getId(), productProperty)).map(Optional::orElseThrow).toList();
     }
 
 

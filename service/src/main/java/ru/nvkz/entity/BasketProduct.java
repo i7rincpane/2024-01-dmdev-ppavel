@@ -30,9 +30,11 @@ public class BasketProduct implements BaseEntity<Long> {
     private Basket basket;
     private Integer count;
     private BigDecimal sum;
-    private Boolean isActive;
+    private Boolean isSelected;
 
     public void setSum(BigDecimal sum) {
-        this.sum = Optional.ofNullable(count).map(item -> product.getPrice().multiply(BigDecimal.valueOf(item))).orElse(sum);
+        this.sum = Optional.ofNullable(count)
+                .map(item -> product.getPrice().multiply(BigDecimal.valueOf(item)))
+                .orElse(sum);
     }
 }

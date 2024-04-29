@@ -1,8 +1,10 @@
 package ru.nvkz.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public enum OrderStatus {
 
     DRAFT("ЧЕРНОВИК"),
@@ -13,9 +15,4 @@ public enum OrderStatus {
     COMPLETED("ПОЛУЧЕН");
 
     private String text;
-
-    OrderStatus(String text) {
-        this.text = text;
-    }
-
 }

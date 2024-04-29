@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 import ru.nvkz.dto.UserCreateEditDto;
 import ru.nvkz.entity.PersonalInfo;
 import ru.nvkz.entity.User;
+import ru.nvkz.repository.BasketRepository;
 
 import java.util.Optional;
 

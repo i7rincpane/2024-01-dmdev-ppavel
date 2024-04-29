@@ -16,4 +16,5 @@ public class OrderReadDto {
     BigDecimal sum;
     OrderStatus orderStatus;
     Integer count;
+    BasketReadDto basket;
 }

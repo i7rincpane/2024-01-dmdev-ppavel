@@ -43,11 +43,12 @@ public class ProductPropertyController {
 
     @PostMapping
     public String create(@RequestParam List<Long> properties, @RequestParam Long productId) {
-        return "redirect:/products/" + productPropertyService.createAll(properties.stream().map((propertyId) -> ProductPropertyCreateEditDto.builder()
+        List<ProductPropertyCreateEditDto> productPropertyCreateEditDtos = properties.stream().map((propertyId) -> ProductPropertyCreateEditDto.builder()
                         .propertyId(propertyId)
                         .productId(productId)
                         .build())
-                .toList()).stream().findFirst().get().getProduct().getId();
+                .toList();
+        return "redirect:/products/" + productPropertyService.createAll(productPropertyCreateEditDtos).stream().findFirst().get().getProduct().getId();
     }
 
     @PostMapping("/{id}/update")
@@ -60,7 +61,6 @@ public class ProductPropertyController {
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id, @RequestParam Long productId) {
-
         if (!productPropertyService.delete(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

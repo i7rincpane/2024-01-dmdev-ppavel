@@ -35,6 +35,6 @@ public class BasketProductCreateEditMapper implements Mapper<BasketProductCreate
         toObject.setProduct(getEntity(objectDto.getProductId(), productRepository));
         toObject.setCount(objectDto.getCount());
         toObject.setSum(objectDto.getSum());
-        toObject.setIsActive(Optional.ofNullable(objectDto.getIsActive()).orElse(false));
+        toObject.setIsSelected(Optional.ofNullable(objectDto.getIsSelected()).orElse(false));
     }
 }

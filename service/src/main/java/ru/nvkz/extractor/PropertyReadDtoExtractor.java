@@ -69,12 +69,12 @@ public class PropertyReadDtoExtractor implements ResultSetExtractor<List<Propert
         return result;
     }
 
-    private static Map<StringClassifierReadDto, Integer> createNewValueCounts(Long object, String object2) {
+    private static Map<StringClassifierReadDto, Integer> createNewValueCounts(Long object1, String object2) {
         Map<StringClassifierReadDto, Integer> result = new HashMap<>();
-        if (object == 0 && object2 == null) {
-            result.put(new StringClassifierReadDto(object, "нет", null), 1);
+        if (object1 == 0 && object2 == null) {
+            result.put(new StringClassifierReadDto(object1, "нет", null), 1);
         } else {
-            result.put(new StringClassifierReadDto(object, object2, null), 1);
+            result.put(new StringClassifierReadDto(object1, object2, null), 1);
         }
         return result;
     }

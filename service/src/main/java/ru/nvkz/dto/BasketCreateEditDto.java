@@ -5,7 +5,7 @@ import lombok.Value;
 
 import java.math.BigDecimal;
 
-@Builder
+
 @Value
 public class BasketCreateEditDto {
 

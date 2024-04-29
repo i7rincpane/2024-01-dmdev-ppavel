@@ -12,63 +12,101 @@
 <div class="container">
     <div th:insert="~{fragment :: header-empty}"></div>
     <div th:insert="~{fragment:: main-menu}"></div>
-    <div>
+    <div th:if="${basketProducts.isEmpty()}" class="row">
+        <div class="col-md-6 mx-auto">
+        <h1>КОРЗИНА ПУСТА :(</h1>
+        </div>
+    </div>
+    <div th:if="${!basketProducts.isEmpty()}">
+        <br>
+        <div class="row">
+            <h1>КОРЗИНА</h1>
+        </div>
+        <br>
         <br>
         <div class="row">
 
             <div class="col-10">
+                <div th:if="${errors}">
+                    <p style="color: red" th:each="error : ${errors}" th:text="${error.message}">Error message</p>
+                </div>
 
-                <form th:each="basketProduct : ${basketProducts}"
-                      th:action="@{/basket-products/{basketProductId}/update(basketProductId=${basketProduct.id})}"
-                      method="post" th:object="${basketProduct}">
-                    <div class="form-row">
-                        <div class="form-group col-8">
-                            <div class="form-row">
-                                <input id="isActive" type="checkbox"
-                                       name="isActive"
-                                       th:checked="${basketProduct.isActive}" onchange="this.form.submit()">
-                                <label style="margin-left:5px;" for="isActive"
+                <div style="border-bottom: 1px solid #dcd8d8; margin-bottom: 0.5cm;"
+                     th:each="basketProduct : ${basketProducts}">
+                    <form th:action="@{/basket-products/{basketProductId}/update(basketProductId=${basketProduct.id})}"
+                          method="post" th:object="${basketProduct}">
+                        <div class="form-row">
+                            <div class=" col-8">
+                                <div class="form-row">
+                                    <input id="isSelected" type="checkbox"
+                                           name="isSelected"
+                                           th:checked="${basketProduct.getIsSelected}" onchange="this.form.submit()">
+                                    <a th:href="@{/products/{productId}(productId=${basketProduct.product.id})}"
+                                       style="margin-left:5px;" for="isSelected"
                                        th:text="|${basketProduct.product.name}|">BasketProductId:
-                                </label>
+                                    </a>
+                                </div>
+                                <div class="form-row align-self-top">
+                                    <p style="font-size: x-small;"
+                                       th:text="|Артикул: ${basketProduct.product.code}|"></p>
+                                </div>
                             </div>
-                            <div class="form-row align-self-top">
-                                <p style="font-size: x-small;"
-                                   th:text="|Артикул: ${basketProduct.product.code}|"></p>
-                            </div>
-                        </div>
-                        <div class="form-group col-2">
-                            <div class="form-row">
-                                <input hidden="true"
-                                       name="productId"
-                                       type="number"
-                                       th:value="${basketProduct.product.id}">
-                                <input hidden="true"
-                                       name="basketId"
-                                       type="number"
-                                       th:value="${basketProduct.basket.id}">
-                                <input style="width: 80%;" id="count" type="number"
-                                       name="count"
-                                       onchange="this.form.submit()"
-                                       th:value="${basketProduct.count}">
-                            </div>
-                            <div class="form-row">
-                                <p style="font-size:x-small;" for="count"
-                                   th:text="|${basketProduct.product.price} р/шт|">
-                                </p>
-                            </div>
+                            <div class=" col-2">
+                                <div class="form-row">
+                                    <input hidden="true"
+                                           name="productId"
+                                           type="number"
+                                           th:value="${basketProduct.product.id}">
+                                    <input hidden="true"
+                                           name="basketId"
+                                           type="number"
+                                           th:value="${basketProduct.basket.id}">
+                                    <input style="width: 80%;" id="count" type="number"
+                                           name="count"
+                                           onchange="this.form.submit()"
+                                           th:value="${basketProduct.count}">
+                                </div>
+                                <div class="form-row">
+                                    <p style="font-size:x-small;" for="count"
+                                       th:text="|${basketProduct.product.price} р/шт|">
+                                    </p>
+                                </div>
 
+                            </div>
+                            <div class=" col-2">
+                                <div class="row">
+                                    <p th:text="|${basketProduct.sum}руб.|"></p>
+                                </div>
+                            </div>
+                            <div>
+
+                            </div>
+                            <div th:if="${errors}" th:each="error : ${errors}">
+                                <p style="color: red"
+                                   th:text="${T(ru.nvkz.util.CollectionUtils).getMapValue(error.details, basketProduct.id)}">
+                                    Error message</p>
+                            </div>
                         </div>
-                        <div class="form-group col-2">
-                            <p th:text="|${basketProduct.sum}руб.|"></p>
-                        </div>
+
+                    </form>
+                    <div style="margin-bottom: 0.5cm;" class="row">
+                        <form th:action="@{/basket-products/{basketProductId}/delete(basketProductId=${basketProduct.id})}"
+                              method="post">
+                            <input hidden="true"
+                                   name="basketId"
+                                   type="number"
+                                   th:value="${basketProduct.basket.id}">
+                            <button class="btn btn-link" type="submit">Удалить</button>
+                        </form>
                     </div>
-                </form>
+                </div>
 
 
             </div>
             <div class="col-2">
-                <div class="row">
-                    <h1>Ваш заказ</h1>
+
+                <div>
+                    <h3 class="text-center">Ваш заказ</h3>
                 </div>
                 <div class="row">
                     <div class="col-sm">
@@ -98,12 +136,12 @@
                 </div>
 
                 <div class="row">
-                    <form th:action="@{/orders/create-form}">
+                    <form th:action="@{/orders}" method="post">
                         <input hidden="true"
                                name="basketId"
                                type="number"
                                th:value="${basket.id}">
-                        <button type="submit">Перейти к оформлению</button>
+                        <button type="submit">Оформить заказ</button>
                     </form>
                 </div>
 

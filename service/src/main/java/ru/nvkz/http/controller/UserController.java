@@ -44,11 +44,10 @@ public class UserController {
 
     @GetMapping("/{id}")
     public String findById(@PathVariable("id") Long id, Model model, Locale locale) {
-        System.out.println(Role.values());
         return userService.findById(id)
                 .map(user -> {
                     model.addAttribute("user", user);
-                    model.addAttribute("roles", Role.values(locale));
+                    model.addAttribute("roles", Role.values());
                     return "user/user";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

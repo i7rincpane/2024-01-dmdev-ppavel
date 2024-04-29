@@ -20,7 +20,7 @@ public class BasketProductReadMapper implements Mapper<BasketProduct, BasketProd
                 getDto(object.getBasket(), basketReadMapper),
                 object.getCount(),
                 object.getSum(),
-                object.getIsActive()
+                object.getIsSelected()
         );
     }
 }

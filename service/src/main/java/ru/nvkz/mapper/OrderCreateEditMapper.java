@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.nvkz.dto.OrderCreateEditDto;
 import ru.nvkz.entity.Order;
+import ru.nvkz.repository.BasketRepository;
 import ru.nvkz.repository.UserRepository;
 
 @Component
@@ -11,6 +12,7 @@ import ru.nvkz.repository.UserRepository;
 public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> {
 
     private final UserRepository userRepository;
+    private final BasketRepository basketRepository;
 
     @Override
     public Order map(OrderCreateEditDto object) {
@@ -32,5 +34,6 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
         toObject.setSum(objectDto.getSum());
         toObject.setUpdatedAt(objectDto.getUpdatedAt());
         toObject.setCount(objectDto.getCount());
+        toObject.setBasket(getEntity(objectDto.getBasketId(), basketRepository));
     }
 }

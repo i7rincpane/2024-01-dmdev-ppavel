@@ -31,6 +31,8 @@ public class Order implements BaseEntity<Long> {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Basket basket;
     private Instant createdAt;
     private Instant updatedAt;
     private Integer count;

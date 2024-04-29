@@ -28,13 +28,22 @@ VALUES (1, 'test@mail.ru', '$2a$10$vreI7Z9jXgtZj1Gx.UJnAO6H52s3hLEUMLYBQEPMrrOHR
         '89089566776', 'ADMIN', '1990-01-10'),
        (2, 'user@mail.ru', '$2a$10$RM8PwswdINM9J.Uvugp/Ee5zggxRJuwX1HkeFB39fUEcpA5DQ24Om', 'Name', 'Patronimic',
         'Surname',
-        '22-22-22', 'USER', '2024-04-01');
+        '22-22-22', 'USER', '2024-04-01'),
+       (3, 'i7rincpane@gmail.com', '$2a$10$Bb3WwQKuRLuf7TfdwNRuZ.La.w2ygvjT5EV82MrYxMmguJwiTZXLm', 'Name2', 'Patronimic2',
+        'Surname2',
+        '33-33-33', 'ADMIN', '2024-01-01'),
+       (4, 'pane@gmail.com', '$2a$10$2BXtHSoeYfSe3hFjK4rTK.RPkECXACNwh9s/.MgjytXwqncVzgk6G', 'Name3', 'Patronimic3',
+        'Surname3',
+        '44-44-44', 'ADMIN', '2024-01-01'),
+       (5, 'withoutbasket@gmail.com', '$2a$10$8y/b09qmrc5hW3qZ0eKZeOCBRIBRvwvTrV29MB6UAaZTcAhyeg16S', 'Name4', 'Patronimic4',
+        'Surname4',
+        '55-55-55', 'ADMIN', '2024-01-01');
 SELECT SETVAL('users_id_seq', (SELECT MAX(id) FROM users));
 
 INSERT INTO product (id, code, category_id, producer_id, model, price, count)
 VALUES (1, '1292955', 5, 1, '4M2CTYL/B', 6499.0, 5),
        (2, '1332067', 5, 1, 'EH-C2NSMA/B', 6999.0, 5),
-       (3, '5005295', 5, 2, '1B4TODB', 5555.0, 2),
+       (3, '5005295', 5, 2, '1B4TODB', 5555.0, 0),
        (4, '5005292', 5, 1, '1B4TOD2B', 10000.0, 2),
        (5, '5059789', 7, 1, 'EH-I2MB/B', 7499.0, 5),
        (6, '5059786', 7, 1, 'EH-I2SMA/B', 7499.0, 5),
@@ -85,21 +94,25 @@ VALUES (1, 1, 1, null, 2, null, null, null, null),
 SELECT SETVAL('product_property_id_seq', (SELECT MAX(id) FROM product_property));
 
 INSERT INTO basket(id, user_id, sum, count)
-VALUES (1, 2, 19997, 2),
-       (2, 1, 7849, 2);
+VALUES (1, 2, 18553, 3),
+       (2, 1, 7849, 2),
+       (3, 3, 0, 0),
+       (4, 4, 0, 0);
 SELECT SETVAL('basket_id_seq', (SELECT MAX(id) FROM basket));
 
-INSERT INTO basket_product(id, basket_id, product_id, count, sum)
-VALUES (1, 1, 1, 2, 12998),
-       (2, 1, 3, 1, 5555),
-       (3, 2, 1, 1, 6499),
-       (4, 2, 9, 1, 1350);
+INSERT INTO basket_product(id, basket_id, product_id, count, sum, is_selected)
+VALUES (1, 1, 1, 2, 12998, true),
+       (2, 1, 3, 1, 5555, true),
+       (3, 2, 1, 1, 6499, true),
+       (4, 2, 9, 1, 1350, true),
+       (5, 4, 9, 1, 1350, false),
+       (6, 2, 2, 1, 6999, false);
 SELECT SETVAL('basket_product_id_seq', (SELECT MAX(id) FROM basket_product));
 
-INSERT INTO orders(id, created_at, updated_at, sum, user_id, order_status, count)
-VALUES (1, '2024-04-10', null, 5555, 2, 'CANCELED', 1),
-       (2, '2024-04-01', null, 6499, 2, 'PROCESSING', 1),
-       (3, '2023-04-01', null, 12054, 1, 'PROCESSING', 2);
+INSERT INTO orders(id, created_at, updated_at, sum, user_id, order_status, count, basket_id)
+VALUES (1, '2024-04-10', null, 5555, 2, 'CANCELED', 1, 1),
+       (2, '2024-04-01', null, 6499, 2, 'PROCESSING', 1, 1),
+       (3, '2023-04-01', null, 12054, 1, 'PROCESSING', 2, 2);
 SELECT SETVAL('orders_id_seq', (SELECT MAX(id) FROM orders));
 
 INSERT INTO order_product(id, order_id, product_id, count, sum)

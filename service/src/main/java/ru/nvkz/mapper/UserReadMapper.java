@@ -7,7 +7,6 @@ import ru.nvkz.entity.PersonalInfo;
 import ru.nvkz.entity.User;
 
 @Component
-@RequiredArgsConstructor
 public class UserReadMapper implements Mapper<User, UserReadDto> {
 
     @Override

@@ -10,6 +10,7 @@ import ru.nvkz.entity.Basket;
 import ru.nvkz.entity.BasketProduct;
 import ru.nvkz.mapper.BasketProductCreateEditMapper;
 import ru.nvkz.mapper.BasketProductReadMapper;
+import ru.nvkz.mapper.Mapper;
 import ru.nvkz.repository.BasketProductRepository;
 
 import java.math.BigDecimal;
@@ -25,12 +26,6 @@ public class BasketProductService {
     private final BasketProductReadMapper basketProductReadMapper;
     private final BasketProductCreateEditMapper basketProductCreateEditMapper;
 
-    public List<BasketProductReadDto> findAll() {
-        return basketProductRepository.findAll().stream()
-                .map(basketProductReadMapper::map)
-                .toList();
-    }
-
     public Optional<BasketProductReadDto> findById(Long id) {
         return basketProductRepository.findById(id)
                 .map(basketProductReadMapper::map);
@@ -42,8 +37,8 @@ public class BasketProductService {
                 .map(basketProductCreateEditMapper::map)
                 .map(it -> {
                     it.setCount(1);
-                    it.setIsActive(true);
-                    it.setSum(new BigDecimal(0));
+                    it.setIsSelected(true);
+                    it.setSum(BigDecimal.ZERO);
                     return it;
                 })
                 .map(basketProductRepository::save)
@@ -74,16 +69,26 @@ public class BasketProductService {
     }
 
     public List<BasketProductReadDto> findAllByBasketId(Long basketId) {
+        return this.findAllByBasketId(basketId, basketProductReadMapper);
+    }
+
+    public <T> List<T> findAllByBasketId(Long basketId, Mapper<BasketProduct, T> mapper) {
         return basketProductRepository.findAllByBasketId(basketId).stream()
-                .map((v) -> basketProductReadMapper.map(v))
+                .map((v) -> mapper.map(v))
                 .toList();
+    }
+
+    public List<BasketProduct> findAllAvailableByBasketId(Long basketId) {
+        return basketProductRepository.findAllByBasketIdAndIsSelectedTrueAndCountLessThanEqualProductCount(basketId);
     }
 
     private BasketProduct updateBasketCountAndSumm(BasketProduct basketProduct) {
         Basket basket = basketProduct.getBasket();
-        List<BasketProductReadDto> basketProductsIsActive = this.findAllByBasketId(basket.getId()).stream().filter(BasketProductReadDto::getIsActive).toList();
-        basket.setCount(basketProductsIsActive.stream().map(BasketProductReadDto::getCount).mapToInt(Integer::intValue).sum());
-        basket.setSum(basketProductsIsActive.stream().map(BasketProductReadDto::getSum).reduce(BigDecimal.ZERO, BigDecimal::add));
+        List<BasketProductReadDto> basketProductsIsSelected = this.findAllByBasketId(basket.getId()).stream().filter(BasketProductReadDto::getIsSelected).toList();
+        basket.setCount(basketProductsIsSelected.stream().map(BasketProductReadDto::getCount).mapToInt(Integer::intValue).sum());
+        basket.setSum(basketProductsIsSelected.stream().map(BasketProductReadDto::getSum).reduce(BigDecimal.ZERO, BigDecimal::add));
         return basketProduct;
     }
+
+
 }

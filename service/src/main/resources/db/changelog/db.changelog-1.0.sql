@@ -94,7 +94,7 @@ create table basket_product
     basket_id  BIGINT REFERENCES basket (id)  NOT NULL,
     product_id BIGINT REFERENCES product (id) NOT NULL,
     sum        NUMERIC(19, 2) DEFAULT 0,
-    is_active  BOOLEAN        DEFAULT true,
+    is_selected  BOOLEAN        DEFAULT true,
     UNIQUE (basket_id, product_id)
 );
 
@@ -102,12 +102,13 @@ create table basket_product
 create table orders
 (
     id           BIGSERIAL PRIMARY KEY,
-    created_at   TIMESTAMP                    NOT NULL,
+    created_at   TIMESTAMP                     NOT NULL,
     updated_at   TIMESTAMP,
     count        INT            DEFAULT 0,
     sum          NUMERIC(19, 2) DEFAULT 0,
-    user_id      BIGINT REFERENCES users (id) NOT NULL,
-    order_status VARCHAR(128)                 NOT NULL
+    user_id      BIGINT REFERENCES users (id)  NOT NULL,
+    basket_id    BIGINT REFERENCES basket (id) NOT NULL,
+    order_status VARCHAR(128)                  NOT NULL
 );
 
 --changeset dnsshop:11

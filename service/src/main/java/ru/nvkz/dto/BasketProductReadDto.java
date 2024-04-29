@@ -12,5 +12,5 @@ public class BasketProductReadDto {
     BasketReadDto basket;
     Integer count;
     BigDecimal sum;
-    Boolean isActive;
+    Boolean isSelected;
 }

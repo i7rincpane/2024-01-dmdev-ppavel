@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import ru.nvkz.dto.BasketProductCreateEditDto;
 import ru.nvkz.dto.BasketProductReadDto;
+import ru.nvkz.dto.BasketReadDto;
 import ru.nvkz.service.BasketProductService;
 
 @Slf4j
@@ -25,19 +27,40 @@ public class BasketProductController {
     private final BasketProductService basketProductService;
 
     @PostMapping
-    public String create(@ModelAttribute BasketProductCreateEditDto basketProduct, Model model) {
+    public String create(Model model, @ModelAttribute BasketProductCreateEditDto basketProduct, @SessionAttribute("basket") BasketReadDto sessionBasket) {
+        if (sessionBasket.getId() != basketProduct.getBasketId()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
         BasketProductReadDto newBasketProduct = basketProductService.create(basketProduct);
         model.addAttribute("basket", newBasketProduct.getBasket());
         return "redirect:/products/" + newBasketProduct.getProduct().getId();
     }
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Long id, @ModelAttribute BasketProductCreateEditDto basketProduct, Model model) {
+    public String update(@PathVariable("id") Long id, @ModelAttribute BasketProductCreateEditDto basketProduct, @SessionAttribute("basket") BasketReadDto sessionBasket) {
+        checkAffiliation(id, sessionBasket);
         return basketProductService.update(id, basketProduct)
-                .map(it -> {
-                    model.addAttribute("basket", it.getBasket());
-                    return "redirect:/baskets/" + it.getBasket().getId();
-                })
+                .map(it -> "redirect:/baskets/" + it.getBasket().getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable("id") Long id,  @SessionAttribute("basket") BasketReadDto sessionBasket) {
+       //TODO:29.04.2024 можно както лучше проверить?
+        checkAffiliation(id, sessionBasket);
+        if (!basketProductService.delete(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return "redirect:/baskets/" + sessionBasket.getId();
+    }
+
+    private void checkAffiliation(Long id, BasketReadDto sessionBasket) {
+        basketProductService.findById(id)
+                .ifPresent(foundBasket -> {
+                    if (sessionBasket.getId() != foundBasket.getId()) {
+                        throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+                    }
+                });
     }
 }

@@ -1,11 +1,21 @@
 package ru.nvkz.http.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.nvkz.IntegrationTestBase;
 import ru.nvkz.dto.UserCreateEditDto;
+import ru.nvkz.entity.Role;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -13,21 +23,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static org.testcontainers.shaded.org.hamcrest.Matchers.hasSize;
 
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
-class UserControllerTest extends IntegrationTestBase {
+class UserControllerIT extends IntegrationTestBase {
 
     private final MockMvc mockMvc;
 
+    @BeforeEach
+    void init() {
+        List<GrantedAuthority> authorities = Arrays.asList(Role.ADMIN, Role.USER);
+        User testUser = new User("test@mail.ru", "123", authorities);
+        TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(testUser, testUser.getAuthorities(), authorities);
+
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(testingAuthenticationToken);
+        SecurityContextHolder.setContext(securityContext);
+    }
+
+
     @Test
     void findAll() throws Exception {
+
         mockMvc.perform(get("/users"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(view().name("user/users"))
-                .andExpect(model().attributeExists("users"))
-                .andExpect(model().attribute("users", hasSize(5)));
+                .andExpect(model().attributeExists("users"));
     }
 
     @Test

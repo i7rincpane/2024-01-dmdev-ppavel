@@ -11,9 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.nvkz.dto.BasketCreateEditDto;
-import ru.nvkz.dto.BasketReadDto;
 import ru.nvkz.dto.UserCreateEditDto;
-import ru.nvkz.dto.UserDetails;
+import ru.nvkz.dto.CustomUserDetails;
 import ru.nvkz.dto.UserReadDto;
 import ru.nvkz.entity.PersonalInfo;
 import ru.nvkz.entity.PersonalInfo_;
@@ -96,8 +95,8 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username).map(user -> new UserDetails(
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username).map(user -> new CustomUserDetails(
                         user.getId(),
                         user.getEmail(),
                         user.getPassword(),
@@ -108,10 +107,6 @@ public class UserService implements UserDetailsService {
     }
 
     private BasketCreateEditDto buildDefaultBasket(UserReadDto user) {
-        return BasketCreateEditDto.builder()
-                .userId(user.getId())
-                .count(0)
-                .sum(new BigDecimal(0))
-                .build();
+        return new BasketCreateEditDto(user.getId(), new BigDecimal(0), 0);
     }
 }

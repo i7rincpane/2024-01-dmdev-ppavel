@@ -10,6 +10,7 @@ import ru.nvkz.entity.Order;
 public class OrderReadMapper implements Mapper<Order, OrderReadDto> {
 
     private final UserReadMapper userReadMapper;
+    private final BasketReadMapper basketReadMapper;
 
     @Override
     public OrderReadDto map(Order object) {
@@ -20,7 +21,8 @@ public class OrderReadMapper implements Mapper<Order, OrderReadDto> {
                 object.getUpdatedAt(),
                 object.getSum(),
                 object.getOrderStatus(),
-                object.getCount()
+                object.getCount(),
+                getDto(object.getBasket(), basketReadMapper)
         );
     }
 }
