@@ -31,11 +31,13 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())//нужно отключить, поговорим отдельно дальше
                 .authorizeHttpRequests(urlConfig ->
                         urlConfig
-                                .requestMatchers("/login", "/users/registration", "/v3/api-docs/**", "/swagger-ui/**")
+                                .requestMatchers("/products/create-form", "products/{id}/update").hasAuthority(ADMIN.getAuthority())
+                                .requestMatchers("/products/{id}","/catalogs/**", "/catalogs", "/login", "/users/registration", "/v3/api-docs/**", "/api/v1/**", "/swagger-ui/**")
                                 .permitAll()
                                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                                // .requestMatchers("/users/{\\d+}/delete").hasAnyRole(ADMIN.getAuthority())
+//                                .requestMatchers("/products/{id}/**").hasAnyRole(ADMIN.getAuthority())
                                 .requestMatchers("/properties/**").hasAuthority(ADMIN.getAuthority())
+                                .requestMatchers("/product-properties/**").hasAuthority(ADMIN.getAuthority())
                                 .requestMatchers("/string-classifiers/**").hasAuthority(ADMIN.getAuthority())
                                 .anyRequest().authenticated())
                 .formLogin(login -> login
@@ -44,5 +46,6 @@ public class SecurityConfig {
                 );
         return http.build();
     }
+
 
 }

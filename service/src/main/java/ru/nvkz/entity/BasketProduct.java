@@ -1,6 +1,7 @@
 package ru.nvkz.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,15 +11,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.nvkz.listener.BasketProductListener;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
+@EntityListeners(BasketProductListener.class)
 public class BasketProduct implements BaseEntity<Long> {
 
     @Id
@@ -32,9 +34,9 @@ public class BasketProduct implements BaseEntity<Long> {
     private BigDecimal sum;
     private Boolean isSelected;
 
-    public void setSum(BigDecimal sum) {
-        this.sum = Optional.ofNullable(count)
-                .map(item -> product.getPrice().multiply(BigDecimal.valueOf(item)))
-                .orElse(sum);
+    public BasketProduct setCount(Integer count) {
+        this.count = count;
+        this.sum = product.getPrice().multiply(BigDecimal.valueOf(count));
+        return this;
     }
 }

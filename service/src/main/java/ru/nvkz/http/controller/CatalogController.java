@@ -3,6 +3,9 @@ package ru.nvkz.http.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import ru.nvkz.dto.BasketReadDto;
+import ru.nvkz.dto.PageResponse;
 import ru.nvkz.dto.ProductCreateEditDto;
 import ru.nvkz.dto.ProductReadDto;
 import ru.nvkz.dto.CategoryReadDto;
@@ -39,25 +43,22 @@ public class CatalogController {
 
 
     @GetMapping
-    public String findAll(Model model, @SessionAttribute("basket") BasketReadDto basket) {
+    public String findAll(Model model) {
         model.addAttribute("catalogs", categoryService.findAllByParentRoot());
         model.addAttribute("pathElements", categoryService.findAllPathElementByParentRoot());
         return "catalog/catalogs";
     }
 
     @GetMapping("/{parentId}")
-    public String findAllByParentId(Model model, @PathVariable("parentId") Long parentId, ProductFilter productFilter) {
+    public String findAllByParentId(Model model, @PathVariable("parentId") Long parentId, ProductFilter productFilter, @PageableDefault(value = 8) Pageable pageable) {
         List<CategoryReadDto> catalogs = categoryService.findAllByParentId(parentId);
-
-        List<PropertyFilterReadDto> a = propertyService.findAllWithCountProductProperty(parentId);
 
         if (catalogs.isEmpty()) {
             model.addAttribute("producers", producerRepository.findAllByCategoryId(parentId));
-            model.addAttribute("properties", a);
+            model.addAttribute("properties", propertyService.findAllWithCountProductProperty(parentId));
             model.addAttribute("productFilter", productFilter);
-
-            List<ProductReadDto> products = productService.findAllDistinctByProductFilter(productFilter, parentId);
-            model.addAttribute("products", products);
+            Page<ProductReadDto> products = productService.findAllDistinctByProductFilter(productFilter, parentId, pageable);
+            model.addAttribute("products", PageResponse.of(products));
         }
 
         model.addAttribute("catalogs", catalogs);
@@ -65,22 +66,4 @@ public class CatalogController {
         model.addAttribute("pathElements", categoryService.findAllPathElementByParentId(parentId));
         return "catalog/catalogs";
     }
-
-    @GetMapping("/{parentId}/properties/create-form")
-    public String showPropertyCreateForm(@PathVariable Long parentId, Model model, PropertyCreateEditDto property) {
-        model.addAttribute("property", property);
-        model.addAttribute("categoryId", parentId);
-        model.addAttribute("types", TypeValue.values());
-        return "property/property-create";
-    }
-
-    @GetMapping("/{parentId}/products/create-form")
-    public String showProductCreateForm(@PathVariable Long parentId, Model model, ProductCreateEditDto product) {
-        model.addAttribute("product", product);
-        model.addAttribute("categoryId", parentId);
-        model.addAttribute("producers", producerRepository.findAll());
-        return "product/product-create";
-    }
-
-
 }

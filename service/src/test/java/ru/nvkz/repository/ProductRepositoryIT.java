@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.nvkz.IntegrationTestBase;
 import ru.nvkz.entity.Product;
 import ru.nvkz.filter.ProductFilter;
@@ -22,17 +25,18 @@ class ProductRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAllDistinctByProductFilterAllParams() {
-        String[] productNamesExpected = {"Электрическая варочная поверхность DEXP 4M2CTYL/B", "Электрическая варочная поверхность DEXP EH-C2NSMA/B"};
+        String[] productNamesExpected = {"Электрическая варочная поверхность DEXP 4M2CTYL/B", "Электрическая варочная поверхность DEXP EH-C2NSMA/B", "Электрическая варочная поверхность DARINA 1B4TODB"};
         ProductFilter productFilter = ProductFilter.builder()
                 //.propertyIdBatch(List.of(1L, 9L))
                 .priceFrom(new BigDecimal(2000.0))
                 .priceBy(new BigDecimal(9999.0))
                 .build();
 
-        List<Product> productActualBatch = repository.findAllDistinctByProductFilter(productFilter, 5l);
+        Page<Product> productActualBatch = repository.findAllDistinctByProductFilter(productFilter, 5l, PageRequest.of(0, 3));
 
-        Assertions.assertThat(productActualBatch).hasSize(2);
-        List<String> productNameActualBatch = productActualBatch.stream().map(Product::getName).toList();
+        Assertions.assertThat(productActualBatch).hasSize(3);
+        Assertions.assertThat(productActualBatch.getTotalElements()).isEqualTo(12);
+        List<String> productNameActualBatch = productActualBatch.map(Product::getName).toList();
         assertThat(productNameActualBatch).contains(productNamesExpected);
     }
 
@@ -55,11 +59,7 @@ class ProductRepositoryIT extends IntegrationTestBase {
     }
 
 
-    @Test
-    @DisplayName("поиск числовому фильтру, от, до, между, для нескольких однотипных свойств")
-    void testFilter4() {
 
-    }
 
     @Test
     @DisplayName("поиск фильтру вещественных чисел, от, до, между, для нескольких однотипных свойств")

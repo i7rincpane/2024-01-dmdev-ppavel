@@ -64,4 +64,13 @@ public class PropertyController {
         }
         return "redirect:/catalogs/" + categoryId;
     }
+
+    @GetMapping("/create-form")
+    public String showPropertyCreateForm(Model model, PropertyCreateEditDto property, @RequestParam Long parentId) {
+        model.addAttribute("property", property);
+        model.addAttribute("categoryId", parentId);
+        model.addAttribute("types", TypeValue.values());
+        return "property/property-create";
+    }
+
 }

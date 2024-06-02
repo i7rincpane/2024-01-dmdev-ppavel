@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Личный кабинет</title>
@@ -13,33 +13,45 @@
     <div th:insert="~{fragment :: header}"></div>
     <div class="row">
         <div class="col-sm">
-            <a th:href="@{/products/{productId}/product-properties/create-form(productId=${productRead.id})}">Добавить
+            <a th:href="@{/product-properties/create-form(productId=${productRead.id})}">Добавить
                 свойство</a>
         </div>
-        <div class="col-sm">
+    </div>
+    <div style="margin-bottom: 40px; margin-top: 20px;" class="row">
+        <h3 th:text="${productRead.name}"></h3>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <img style="width:250px;height:250px;" th:src="@{'/api/v1/products/' + ${productRead.id} + '/image'}"
+                 alt="Product image">
+        </div>
+        <div class="col-2">
+            <h5 style="background: rgba(248,248,248,0.4)" th:text="|${productRead.price} РУБ.|"></h5>
+        </div>
+        <div class="col-2">
             <form th:action="@{/basket-products}" method="post" th:object="${productRead}">
                 <input hidden="true"
                        name="productId"
                        type="number"
                        th:value="${productRead.id}">
-                <input hidden="true"
-                       name="basketId"
-                       type="number"
-                       th:value="${session.basket.id}">
-                <button type="submit">Купить</button>
+                <button style="width:150px; height: 50px;  background-color: rgb(255,141,62);  color: white;"
+                        class="btn" type="submit">Купить
+                </button>
             </form>
         </div>
+    </div>
+    <div style="margin-top: 40px; margin-bottom: 20px" class="row">
+        <h5>Характеристики</h5>
     </div>
     <div class="row">
         <div class="col-sm">
             <form th:action="@{/products/{productId}/update(productId=${productRead.id})}" method="post"
                   th:object="${productRead}">
                 <div>
-                    <p th:text="|Название: ${productRead.getName()}|"></p>
+                    <p th:text="|Тип продукта: *{category.name}|"></p>
+                    <input hidden="true" id="categoryId" type="number" name="categoryId" th:value="*{category.id}">
                 </div>
-                <div>
-                    <p th:text="|Тип продукта: ${productRead.getCategory().getName()}|"></p>
-                </div>
+
                 <div>
                     <label for="count">Количество:
                         <input id="count" type="number" name="count" th:value="*{count}">

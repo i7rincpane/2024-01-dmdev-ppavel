@@ -28,6 +28,7 @@ public class CustomAuthenticationSuccessHandler
         CustomUserDetails customUserDetails =
                 (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         request.getSession().setAttribute("basket", basketService.findByUserId(customUserDetails.getId()).orElseThrow());
+        System.out.println(request.getHeader("referer"));
         super.setDefaultTargetUrl("/catalogs");
         super.onAuthenticationSuccess(request,
                 response, authentication);

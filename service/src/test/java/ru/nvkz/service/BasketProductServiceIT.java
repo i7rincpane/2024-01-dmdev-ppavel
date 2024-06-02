@@ -27,16 +27,15 @@ class BasketProductServiceIT extends IntegrationTestBase {
     private final BasketService basketService;
 
     @Test
-    void create() {
+    void createOrCountUpdate() {
         BasketProductCreateEditDto basketProductCreateEditDto = new BasketProductCreateEditDto(
                 PRODUCT_ID_2,
                 BASKET_ID_1,
-                null,
-                null,
-                null
+                1,
+                true
         );
 
-        BasketProductReadDto actualResult = basketProductService.create(basketProductCreateEditDto);
+        BasketProductReadDto actualResult = basketProductService.createOrCountUpdate(basketProductCreateEditDto);
 
         assertThat(actualResult.getId()).isNotNull();
         assertEquals(1, actualResult.getCount());
@@ -44,6 +43,9 @@ class BasketProductServiceIT extends IntegrationTestBase {
         assertEquals(true, actualResult.getIsSelected());
         assertThat(new BigDecimal(25552)).isEqualByComparingTo(actualResult.getBasket().getSum());
         assertEquals(4, actualResult.getBasket().getCount());
+
+        BasketProductReadDto actualResult2 = basketProductService.createOrCountUpdate(basketProductCreateEditDto);
+        assertEquals(2, actualResult2.getCount());
     }
 
     @Test
@@ -52,7 +54,6 @@ class BasketProductServiceIT extends IntegrationTestBase {
                 PRODUCT_ID_1,
                 BASKET_ID_1,
                 3,
-                new BigDecimal(12998),
                 true
         );
 
@@ -74,7 +75,6 @@ class BasketProductServiceIT extends IntegrationTestBase {
                 PRODUCT_ID_1,
                 BASKET_ID_1,
                 3,
-                new BigDecimal(12998),
                 UNSELECTED
         );
 

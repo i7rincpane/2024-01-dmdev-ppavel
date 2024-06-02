@@ -9,12 +9,15 @@ import org.springframework.stereotype.Repository;
 import ru.nvkz.entity.BasketProduct;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BasketProductRepository extends JpaRepository<BasketProduct, Long> {
 
     @EntityGraph(attributePaths = {"product"})
     List<BasketProduct> findAllByBasketId(Long basketId);
+
+    Optional<BasketProduct> findByBasketIdAndProductId(Long basketId, Long productId);
 
     @Query(value = "select bp from BasketProduct bp " +
             "join bp.product p " +

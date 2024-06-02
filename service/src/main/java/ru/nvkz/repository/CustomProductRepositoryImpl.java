@@ -1,6 +1,8 @@
 package ru.nvkz.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.AbstractQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
@@ -8,8 +10,12 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.ListJoin;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import ru.nvkz.entity.Category;
 import ru.nvkz.entity.Category_;
 import ru.nvkz.entity.Producer;
@@ -34,12 +40,38 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
     public static final Long MISSING_VALUE = 0L;
     private final EntityManager entityManager;
 
-    public List<Product> findAllDistinctByProductFilter(ProductFilter productFilter, Long categoryId) {
+    public Page<Product> findAllDistinctByProductFilter(ProductFilter productFilter, Long categoryId, Pageable pageable) {
         log.info("find all distinct by productfilter, filter {}", productFilter);
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        List<Product> content = getContent(productFilter, categoryId, cb, pageable);
+        Long count = getCount(productFilter, categoryId, cb);
+
+        return PageableExecutionUtils.getPage(content, pageable, () -> count);
+    }
+
+    private List<Product> getContent(ProductFilter productFilter, Long categoryId, CriteriaBuilder cb, Pageable pageable) {
         CriteriaQuery<Product> cq = cb.createQuery(Product.class);
-        Root<Product> product = cq.from(Product.class);
+        Root<Product> root = cq.from(Product.class);
+        extracted(productFilter, categoryId, root, cq.select(root), cb);
+        TypedQuery<Product> query = entityManager.createQuery(cq);
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+        return query.getResultList();
+    }
+
+    private Long getCount(ProductFilter productFilter, Long categoryId, CriteriaBuilder cb) {
+        CriteriaQuery<Long> cq2 = cb.createQuery(Long.class);
+        Subquery<Long> csq = cq2.subquery(Long.class);
+        Root<Product> subProduct = csq.from(Product.class);
+        extracted(productFilter, categoryId, subProduct, csq.select(subProduct.get(Product_.ID)), cb);
+        Root<Product> entityRoot = cq2.from(Product.class);
+        cq2.select(cb.count(entityRoot)).where(entityRoot.get(Product_.ID).in(csq));
+        return entityManager.createQuery(cq2).getSingleResult();
+    }
+
+    private <T> void extracted(ProductFilter productFilter, Long categoryId, Root<Product> product, AbstractQuery<T> select, CriteriaBuilder cb) {
         Join<Product, Producer> producer = (Join<Product, Producer>) product.fetch(Product_.producer);
         Join<Product, Category> category = (Join<Product, Category>) product.fetch(Product_.category);
         Join<Category, Category> categoryParent = (Join<Category, Category>) category.fetch(Category_.parent);
@@ -84,9 +116,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                                         .add(key, param -> cb.equal(property.get(Property_.ID), param))
                                         .build())
                 ).build();
-
-        //  .add(Collections.replaceAll(paramInMap, 0L, null), param -> stringClassifier.get(StringClassifier_.ID).in(paramInMap))
-        cq.select(product)
+        select
                 .where(cb.and(cb.and(productPredicates),
                         propertyPredicates.length != 0 ? cb.or(propertyPredicates) : cb.and()))
                 .groupBy(product.get(Product_.ID),
@@ -94,7 +124,5 @@ public class CustomProductRepositoryImpl implements CustomProductRepository {
                         categoryParent.get(Category_.ID),
                         producer.get(Producer_.ID))
                 .having(propertyPredicates.length != 0 ? cb.equal(cb.count(product.get(Product_.id)), propertyPredicates.length) : cb.and());
-
-        return entityManager.createQuery(cq).getResultList();
     }
 }

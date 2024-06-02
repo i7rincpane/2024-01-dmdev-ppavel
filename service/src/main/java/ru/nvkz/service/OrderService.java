@@ -58,8 +58,8 @@ public class OrderService {
                 .toList();
     }
 
-    public Optional<OrderReadDto> findById(Long id) {
-        return orderRepository.findById(id)
+    public Optional<OrderReadDto> findByIdAndUserId(Long id, Long userId) {
+        return orderRepository.findByIdAndUserId(id, userId)
                 .map(orderReadMapper::map);
     }
 

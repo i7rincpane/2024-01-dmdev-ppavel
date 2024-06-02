@@ -9,15 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.nvkz.dto.BasketReadDto;
 import ru.nvkz.dto.CustomUserDetails;
 import ru.nvkz.entity.OrderStatus;
 import ru.nvkz.exeption.ValidationException;
 import ru.nvkz.service.OrderProductService;
 import ru.nvkz.service.OrderService;
+
 
 @Controller
 @RequestMapping("/orders")
@@ -29,12 +31,12 @@ public class OrderController {
     private final OrderProductService orderProductService;
 
     @PostMapping
-    public String create(@RequestParam Long basketId, RedirectAttributes redirectAttributes) {
+    public String create(RedirectAttributes redirectAttributes, @SessionAttribute("basket") BasketReadDto sessionBasket) {
         try {
-            return "redirect:/orders/"+ orderService.create(basketId).getId();
+            return "redirect:/orders/" + orderService.create(sessionBasket.getId()).getId();
         } catch (ValidationException e) {
             redirectAttributes.addFlashAttribute("errors", e.getErrors());
-            return "redirect:/baskets/" + basketId;
+            return "redirect:/baskets/" + sessionBasket.getId();
         }
     }
 
@@ -46,8 +48,8 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable("id") Long id, Model model) {
-        return orderService.findById(id)
+    public String findById(Model model, @PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return orderService.findByIdAndUserId(id, customUserDetails.getId())
                 .map(order -> {
                     model.addAttribute("basket", order.getBasket());
                     model.addAttribute("order", order);

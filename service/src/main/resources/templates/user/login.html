@@ -1,25 +1,41 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Аутентифика́ция</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
 </head>
 <body>
-<form action="/login" method="post">
-    <div style="color: red" th:if="${param.error}">
-        Bad credentials
+<div class="container">
+    <div th:insert="~{fragment :: header-empty}"></div>
+    <div>
+        <br>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-10">
+                <form action="/login" method="post">
+                    <div style="color: red" th:if="${param.error}">
+                        Bad credentials
+                    </div>
+                    <label for="username">Email:
+                        <input id="username" type="text" name="username">
+                    </label><br>
+                    <label for="password">Password:
+                        <input id="password" type="password" name="password">
+                    </label><br>
+                    <button type="submit">Login</button>
+                </form>
+                <form action="/users/registration">
+                    <button type="submit">Registration</button>
+                </form>
+            </div>
+            <div class="col-2"></div>
+        </div>
     </div>
-    <label for="username">Email:
-        <input id="username" type="text" name="username">
-    </label><br>
-    <label for="password">Password:
-        <input id="password" type="password" name="password">
-    </label><br>
-    <button type="submit">Login</button>
-</form>
-<form action="/users/registration">
-    <button type="submit">Registration</button>
-</form>
+</div>
 </body>
 </html>
 

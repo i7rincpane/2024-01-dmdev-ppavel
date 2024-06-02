@@ -22,20 +22,29 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm">
-            <div th:if="${!catalogs.isEmpty()}" th:each="catalog : ${catalogs}">
-                <a th:href="@{'/catalogs/' + ${catalog.id}}" th:text="|${catalog.id}. ${catalog.name}|"></a>
-                <br>
+        <div style="margin: 10px" class="col-2" th:if="${!catalogs.isEmpty()}" th:each="catalog : ${catalogs}">
+
+            <div style="margin: 10px">
+                <img th:src="@{'/api/v1/catalogs/' + ${catalog.id} + '/image'}" alt="Catalog image">
             </div>
+            <a class="link-dark" th:href="@{'/catalogs/' + ${catalog.id}}" th:text="|${catalog.id}. ${catalog.name}|">aaa</a>
+            <br>
+
         </div>
     </div>
     <div th:if="${catalogs.isEmpty()}">
         <br>
         <div class="row">
             <div class="col-sm">
+                <h4 th:text="|Найденно: ${products.metadata.getTotalElements()} шт.|"></h4>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-sm-4">
                 <div class="row">
-                    <div class="col-sm">
-                        <a th:href="@{/catalogs/{parentId}/properties/create-form(parentId=${parentId})}">Добавить
+                    <div style=" margin-bottom: 15px;" class="col-sm">
+                        <a th:href="@{/properties/create-form(parentId=${parentId})}"> Добавить
                             свойство</a>
                     </div>
                 </div>
@@ -107,6 +116,16 @@
                                 </div>
                                 <br>
                             </div>
+                            <div>
+                                <label for="page">Page:
+                                    <input min="0" th:max="${products.metadata.getTotalPages()}"
+                                           onchange="this.form.submit()" id="page" type="number" name="page"
+                                           th:value="${products.metadata.page}">
+                                </label>
+                                <label hidden="true" for="size">Size:
+                                    <input id="size" type="number" name="size" th:value="${products.metadata.size}">
+                                </label>
+                            </div>
                             <button type="submit">Применить</button>
                         </form>
                     </div>
@@ -114,16 +133,23 @@
             </div>
             <div class="col-sm">
                 <div class="row">
-                    <div class="col-sm">
-                        <a th:href="@{/catalogs/{parentId}/products/create-form(parentId=${parentId})}">Добавить
+                    <div style=" margin-bottom: 15px;" class="col-sm">
+                        <a th:href="@{/products/create-form(parentId=${parentId})}"> Добавить
                             продукт</a>
                     </div>
                 </div>
-                <div class="row">
+                <div style="border-radius: 10px; margin-bottom: 15px; padding: 15px; background: rgba(248,248,248,0.4)"
+                     class="row" th:each="product : ${products.content}">
+                    <div class="col-2">
+                        <img style="width:70px;height:70px;" th:src="@{'/api/v1/products/' + ${product.id} + '/image'}" alt="Product image">
+                    </div>
                     <div class="col-sm">
-                        <div th:each="product : ${products}">
-                            <a th:href="@{'/products/' + ${product.id}}"
-                               th:text="|${product.id}. ${product.name}|">User</a>
+                        <a th:href="@{'/products/' + ${product.id}}"
+                           th:text="|${product.id}. ${product.name}|">User</a>
+                    </div>
+                    <div class="col-1">
+                        <div class="row">
+                            <p th:text="|${product.price} руб.|"></p>
                         </div>
                     </div>
                 </div>

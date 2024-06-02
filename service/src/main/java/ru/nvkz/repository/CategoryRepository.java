@@ -1,23 +1,23 @@
 package ru.nvkz.repository;
 
+import jakarta.persistence.QueryHint;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import ru.nvkz.dto.CategoryPathElement;
 import ru.nvkz.entity.Category;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    Optional<Category> findById(Long id);
-
+    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     @EntityGraph(attributePaths = {"parent"})
     List<Category> findAllByParentId(Long id);
-
+    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     List<Category> findAllByName(String name);
-
+    @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true"))
     @Query(nativeQuery = true,
             value = "WITH RECURSIVE r(id, name, parent_id, level) AS " +
                     "                   (SELECT id, name, parent_id, 1 " +

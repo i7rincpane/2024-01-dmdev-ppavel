@@ -28,7 +28,6 @@ class BasketProductControllerIT extends IntegrationTestBase {
     void create() throws Exception {
         mockMvc.perform(post("/basket-products")
                         .param(BasketProductCreateEditDto.Fields.productId, "2")
-                        .param(BasketProductCreateEditDto.Fields.basketId, "1")
                         .sessionAttr("basket", new BasketReadDto(BASKET_ID_1, null, null, null))
                 )
                 .andExpectAll(
@@ -39,23 +38,10 @@ class BasketProductControllerIT extends IntegrationTestBase {
     }
 
     @Test
-    void createIsForbidden() throws Exception {
-        mockMvc.perform(post("/basket-products")
-                        .param(BasketProductCreateEditDto.Fields.productId, "2")
-                        .param(BasketProductCreateEditDto.Fields.basketId, "2")
-                        .sessionAttr("basket", new BasketReadDto(BASKET_ID_1, null, null, null))
-                )
-                .andExpectAll(
-                        status().isForbidden()
-                );
-    }
-
-    @Test
     void update() throws Exception {
         mockMvc.perform(post("/basket-products/1/update")
                         .param(BasketProductCreateEditDto.Fields.productId, "1")
                         .param(BasketProductCreateEditDto.Fields.basketId, "1")
-                        .param(BasketProductCreateEditDto.Fields.sum, "12998")
                         .param(BasketProductCreateEditDto.Fields.count, "3")
                         .param(BasketProductCreateEditDto.Fields.isSelected, "true")
                         .sessionAttr("basket", new BasketReadDto(BASKET_ID_1, null, null, null))
@@ -78,7 +64,7 @@ class BasketProductControllerIT extends IntegrationTestBase {
 
     @Test
     void updateIsForbidden() throws Exception {
-        mockMvc.perform(post("/basket-products/2/update")
+        mockMvc.perform(post("/basket-products/3/update")
                         .sessionAttr("basket", new BasketReadDto(BASKET_ID_1, null, null, null))
                 )
                 .andExpectAll(
@@ -89,7 +75,6 @@ class BasketProductControllerIT extends IntegrationTestBase {
     @Test
     void delete() throws Exception {
         mockMvc.perform(post("/basket-products/1/delete")
-                        .param("basketId", "1")
                         .sessionAttr("basket", new BasketReadDto(BASKET_ID_1, null, null, null))
                 )
                 .andExpectAll(
@@ -102,7 +87,6 @@ class BasketProductControllerIT extends IntegrationTestBase {
     @Test
     void deleteIsNotFound() throws Exception {
         mockMvc.perform(post("/basket-products/-111/delete")
-                        .param("basketId", "1")
                         .sessionAttr("basket", new BasketReadDto(-111L, null, null, null))
                 )
                 .andExpectAll(
@@ -112,8 +96,7 @@ class BasketProductControllerIT extends IntegrationTestBase {
 
     @Test
     void deleteIsForbidden() throws Exception {
-        mockMvc.perform(post("/basket-products/2/delete")
-                        .param("basketId", "1")
+        mockMvc.perform(post("/basket-products/3/delete")
                         .sessionAttr("basket", new BasketReadDto(BASKET_ID_1, null, null, null))
                 )
                 .andExpectAll(

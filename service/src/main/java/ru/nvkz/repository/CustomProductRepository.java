@@ -1,11 +1,11 @@
 package ru.nvkz.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.nvkz.entity.Product;
 import ru.nvkz.filter.ProductFilter;
 
-import java.util.List;
-
 public interface CustomProductRepository {
 
-    List<Product> findAllDistinctByProductFilter(ProductFilter productFilter, Long categoryId);
+    Page<Product> findAllDistinctByProductFilter(ProductFilter productFilter, Long categoryId, Pageable pageable);
 }

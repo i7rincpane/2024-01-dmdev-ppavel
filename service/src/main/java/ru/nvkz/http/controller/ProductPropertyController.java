@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.nvkz.dto.ProductPropertyCreateEditDto;
 import ru.nvkz.entity.TypeValue;
 import ru.nvkz.service.ProductPropertyService;
+import ru.nvkz.service.PropertyService;
 import ru.nvkz.service.StringClassifierService;
 
 import java.util.List;
@@ -27,6 +28,14 @@ public class ProductPropertyController {
 
     private final ProductPropertyService productPropertyService;
     private final StringClassifierService stringClassifierService;
+    private final PropertyService propertyService;
+
+    @GetMapping("/create-form")
+    public String showProductProperties(Model model, @RequestParam Long productId) {
+        model.addAttribute("productId", productId);
+        model.addAttribute("properties", propertyService.findMissingPropertiesByProductId(productId));
+        return "product-property/product-properties";
+    }
 
     @GetMapping("/{id}")
     public String findById(@PathVariable("id") Long id, Model model) {

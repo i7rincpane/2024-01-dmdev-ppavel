@@ -92,15 +92,10 @@
                     <div style="margin-bottom: 0.5cm;" class="row">
                         <form th:action="@{/basket-products/{basketProductId}/delete(basketProductId=${basketProduct.id})}"
                               method="post">
-                            <input hidden="true"
-                                   name="basketId"
-                                   type="number"
-                                   th:value="${basketProduct.basket.id}">
                             <button class="btn btn-link" type="submit">Удалить</button>
                         </form>
                     </div>
                 </div>
-
 
             </div>
             <div class="col-2">
@@ -135,13 +130,9 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row text-center">
                     <form th:action="@{/orders}" method="post">
-                        <input hidden="true"
-                               name="basketId"
-                               type="number"
-                               th:value="${basket.id}">
-                        <button type="submit">Оформить заказ</button>
+                        <button style="background-color: rgb(255,141,62);  color: white;" class="btn" type="submit">Оформить заказ</button>
                     </form>
                 </div>
 

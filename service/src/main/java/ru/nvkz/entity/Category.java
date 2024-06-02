@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Category implements BaseEntity<Long> {
 
     @Id
@@ -31,8 +34,10 @@ public class Category implements BaseEntity<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category parent;
     @Builder.Default
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "parent")
     private List<Category> subCategories = new ArrayList<>();
+    private String image;
 
     public Category(Long id, String name, Category parent) {
         this.id = id;

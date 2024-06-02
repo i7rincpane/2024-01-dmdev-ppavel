@@ -19,11 +19,11 @@ class PropertyRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findAllDistinctPropertyByProductTypeId() {
-        String[] expectedPropertyNames = {"Таймер конфорок", "Основной материал изготовления панели", "Всего конфорок", "Ширина", "Рамка"};
+        String[] expectedPropertyNames = {"testNumberField","Таймер конфорок", "Основной материал изготовления панели", "Всего конфорок", "Ширина", "Рамка"};
 
         List<PropertyFilterReadDto> properties = repository.findAllWithCountProductProperty(ELECTRIC_HOB_TYPE_ID);
 
-        assertThat(properties).hasSize(5);
+        assertThat(properties).hasSize(6);
         List<String> propertyNameBatch = properties.stream()
                 .map(PropertyFilterReadDto::getName)
                 .toList();

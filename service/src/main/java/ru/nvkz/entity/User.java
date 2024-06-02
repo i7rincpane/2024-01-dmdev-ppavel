@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "users")
+
 public class User implements BaseEntity<Long>  {
 
     @Id

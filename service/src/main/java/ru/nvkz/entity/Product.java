@@ -13,6 +13,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Builder
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Product implements BaseEntity<Long> {
 
     @Id
@@ -36,6 +39,7 @@ public class Product implements BaseEntity<Long> {
     private Producer producer;
     private BigDecimal price;
     private Integer count;
+    private String image;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Category category;
     @Builder.Default

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Fragments</title>
@@ -20,7 +20,6 @@
         </div>
         <div th:insert="~{fragment:: locale}" class="col-auto align-self-center"></div>
     </div>
-
 </div>
 <div th:fragment="header">
     <div style="border-bottom: 2px solid orange; margin-bottom: 0.5cm;" class="row">
@@ -28,11 +27,11 @@
             <h1 style="color:orange">DNS</h1>
         </div>
         <div th:insert="~{fragment:: locale}" class="col-auto align-self-center"></div>
-        <div class="col-auto align-self-center">
+        <div sec:authorize="isAuthenticated()" class="col-auto align-self-center">
             <a th:href="@{'/users/' + ${#authentication.principal.id}}"
                th:text="${#authentication.principal.username}"></a>
         </div>
-        <div class="col-auto align-self-center">
+        <div sec:authorize="isAuthenticated()" class="col-auto align-self-center">
             <a th:href="@{'/baskets/' + ${session.basket.id}}"
                th:text="|#{header.link.basket} (${session.basket.count})|"></a>
         </div>

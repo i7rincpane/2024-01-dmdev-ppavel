@@ -12,7 +12,8 @@ CREATE TABLE category
 (
     id        BIGSERIAL PRIMARY KEY,
     parent_id BIGINT REFERENCES category (id),
-    name      VARCHAR(255) NOT NULL UNIQUE
+    name      VARCHAR(255) NOT NULL UNIQUE,
+    image     VARCHAR(64)
 );
 
 --changeset dnsshop:3
@@ -38,7 +39,8 @@ CREATE TABLE product
     price       NUMERIC(19, 2)                  NOT NULL,
     producer_id BIGINT REFERENCES producer (id) NOT NULL,
     count       INT DEFAULT 0,
-    category_id BIGINT REFERENCES category (id) NOT NULL
+    category_id BIGINT REFERENCES category (id) NOT NULL,
+    image     VARCHAR(64)
 );
 
 --changeset dnsshop:5
@@ -89,12 +91,12 @@ create table basket
 --changeset dnsshop:9
 create table basket_product
 (
-    id         BIGSERIAL PRIMARY KEY,
-    count      INT            DEFAULT 0,
-    basket_id  BIGINT REFERENCES basket (id)  NOT NULL,
-    product_id BIGINT REFERENCES product (id) NOT NULL,
-    sum        NUMERIC(19, 2) DEFAULT 0,
-    is_selected  BOOLEAN        DEFAULT true,
+    id          BIGSERIAL PRIMARY KEY,
+    count       INT            DEFAULT 0,
+    basket_id   BIGINT REFERENCES basket (id)  NOT NULL,
+    product_id  BIGINT REFERENCES product (id) NOT NULL,
+    sum         NUMERIC(19, 2) DEFAULT 0,
+    is_selected BOOLEAN        DEFAULT true,
     UNIQUE (basket_id, product_id)
 );
 

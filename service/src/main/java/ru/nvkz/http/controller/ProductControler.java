@@ -42,14 +42,7 @@ public class ProductControler {
     private final ProductPropertyService productPropertyService;
     private final StringClassifierService stringClassifierService;
     private final ProducerRepository producerRepository;
-    private final PropertyService propertyService;
 
-    @GetMapping("/{id}/product-properties/create-form")
-    public String showProductProperties(@PathVariable Long id, Model model) {
-        model.addAttribute("productId", id);
-        model.addAttribute("properties", propertyService.findMissingPropertiesByProductId(id));
-        return "product-property/product-properties";
-    }
 
     @GetMapping("/{id}")
     public String findByid(@PathVariable("id") Long id, Model model) {
@@ -66,7 +59,6 @@ public class ProductControler {
                     return "catalog/product";
                 }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
-
 
     @PostMapping("/{id}/update")
     public String update(@PathVariable("id") Long id, @ModelAttribute ProductCreateEditDto product) {
@@ -116,5 +108,11 @@ public class ProductControler {
         return propertyIdStringClassifiers;
     }
 
-
+    @GetMapping("/create-form")
+    public String showProductCreateForm(Model model, ProductCreateEditDto product, @RequestParam Long parentId) {
+        model.addAttribute("product", product);
+        model.addAttribute("categoryId", parentId);
+        model.addAttribute("producers", producerRepository.findAll());
+        return "product/product-create";
+    }
 }

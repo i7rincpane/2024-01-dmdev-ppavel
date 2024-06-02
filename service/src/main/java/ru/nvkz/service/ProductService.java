@@ -1,8 +1,11 @@
 package ru.nvkz.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import ru.nvkz.dto.ProductCreateEditDto;
 import ru.nvkz.dto.ProductReadDto;
 import ru.nvkz.entity.Product;
@@ -12,7 +15,6 @@ import ru.nvkz.mapper.ProductCreateEditMapper;
 import ru.nvkz.mapper.ProductReadMapper;
 import ru.nvkz.repository.ProductRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +26,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductPropertyService productPropertyService;
     private final ProductCreateEditMapper productCreateEditMapper;
+    private final ImageService imageService;
 
     public Optional<ProductReadDto> findById(Long id) {
         return this.findById(id, productReadMapper);
@@ -34,16 +37,18 @@ public class ProductService {
                 .map(mapper::map);
     }
 
-    public List<ProductReadDto> findAllDistinctByProductFilter(ProductFilter productFilter, Long categoryId) {
-        return productRepository.findAllDistinctByProductFilter(productFilter, categoryId).stream()
-                .map(productReadMapper::map)
-                .toList();
+    public Page<ProductReadDto> findAllDistinctByProductFilter(ProductFilter productFilter, Long categoryId, Pageable pageable) {
+        return productRepository.findAllDistinctByProductFilter(productFilter, categoryId, pageable)
+                .map(productReadMapper::map);
     }
 
     @Transactional
-    public Optional<ProductReadDto> update(Long id, ProductCreateEditDto product) {
-        productPropertyService.updateAll(product.getProductProperties());
-        return Optional.ofNullable(ProductReadDto.builder().build());
+    public Optional<ProductReadDto> update(Long id, ProductCreateEditDto productCreateEditDto) {
+        productPropertyService.updateAll(productCreateEditDto.getProductProperties());
+        return productRepository.findById(id)
+                .map(entity -> productCreateEditMapper.map(productCreateEditDto, entity))
+                .map(productRepository::saveAndFlush)
+                .map(productReadMapper::map);
     }
 
 
@@ -65,5 +70,12 @@ public class ProductService {
                             return true;
                         })
                 .orElse(false);
+    }
+
+    public Optional<byte[]> findImage(Long id) {
+        return productRepository.findById(id)
+                .map(Product::getImage)
+                .filter(StringUtils::hasText)
+                .flatMap(imageService::get);
     }
 }

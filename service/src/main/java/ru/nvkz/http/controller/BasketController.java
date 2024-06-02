@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import ru.nvkz.dto.BasketReadDto;
-import ru.nvkz.entity.Basket;
 import ru.nvkz.service.BasketProductService;
 import ru.nvkz.service.BasketService;
 

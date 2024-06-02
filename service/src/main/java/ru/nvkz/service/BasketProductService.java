@@ -14,6 +14,8 @@ import ru.nvkz.mapper.Mapper;
 import ru.nvkz.repository.BasketProductRepository;
 
 import java.math.BigDecimal;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,19 +34,14 @@ public class BasketProductService {
     }
 
     @Transactional
-    public BasketProductReadDto create(BasketProductCreateEditDto basketProductCreateEditDto) {
-        return Optional.of(basketProductCreateEditDto)
-                .map(basketProductCreateEditMapper::map)
-                .map(it -> {
-                    it.setCount(1);
-                    it.setIsSelected(true);
-                    it.setSum(BigDecimal.ZERO);
-                    return it;
-                })
-                .map(basketProductRepository::save)
-                .map(this::updateBasketCountAndSumm)
+    public BasketProductReadDto createOrCountUpdate(BasketProductCreateEditDto basketProductCreateEditDto) {
+        return basketProductRepository.findByBasketIdAndProductId(basketProductCreateEditDto.getBasketId(),
+                        basketProductCreateEditDto.getProductId())
+                .map(basketProduct -> basketProduct.setCount(basketProduct.getCount() + basketProductCreateEditDto.getCount()))
+                .map(basketProductRepository::saveAndFlush)
+   //             .map(this::updateBasketCountAndSumm)
                 .map(basketProductReadMapper::map)
-                .orElseThrow();
+                .orElseGet(() -> create(basketProductCreateEditDto));
     }
 
     @Transactional
@@ -52,7 +49,7 @@ public class BasketProductService {
         return basketProductRepository.findById(id)
                 .map(entity -> basketProductCreateEditMapper.map(basketProductCreateEditDto, entity))
                 .map(basketProductRepository::saveAndFlush)
-                .map(this::updateBasketCountAndSumm)
+  //              .map(this::updateBasketCountAndSumm)
                 .map(basketProductReadMapper::map);
     }
 
@@ -62,7 +59,7 @@ public class BasketProductService {
                         entity -> {
                             basketProductRepository.delete(entity);
                             basketProductRepository.flush();
-                            updateBasketCountAndSumm(entity);
+       //                     updateBasketCountAndSumm(entity);
                             return true;
                         })
                 .orElse(false);
@@ -82,13 +79,22 @@ public class BasketProductService {
         return basketProductRepository.findAllByBasketIdAndIsSelectedTrueAndCountLessThanEqualProductCount(basketId);
     }
 
-    private BasketProduct updateBasketCountAndSumm(BasketProduct basketProduct) {
-        Basket basket = basketProduct.getBasket();
-        List<BasketProductReadDto> basketProductsIsSelected = this.findAllByBasketId(basket.getId()).stream().filter(BasketProductReadDto::getIsSelected).toList();
-        basket.setCount(basketProductsIsSelected.stream().map(BasketProductReadDto::getCount).mapToInt(Integer::intValue).sum());
-        basket.setSum(basketProductsIsSelected.stream().map(BasketProductReadDto::getSum).reduce(BigDecimal.ZERO, BigDecimal::add));
-        return basketProduct;
+//    private BasketProduct updateBasketCountAndSumm(BasketProduct basketProduct) {
+//        Basket basket = basketProduct.getBasket();
+//        List<BasketProductReadDto> basketProductsIsSelected = this.findAllByBasketId(basket.getId()).stream().filter(BasketProductReadDto::getIsSelected).toList();
+//        basket.setCount(basketProductsIsSelected.stream().map(BasketProductReadDto::getCount).mapToInt(Integer::intValue).sum());
+//        basket.setSum(basketProductsIsSelected.stream().map(BasketProductReadDto::getSum).reduce(BigDecimal.ZERO, BigDecimal::add));
+//        return basketProduct;
+//    }
+    private BasketProductReadDto create(BasketProductCreateEditDto basketProductCreateEditDto) {
+        return Optional.of(basketProductCreateEditDto)
+                .map(basketProductCreateEditMapper::map)
+                .map(basketProductRepository::save)
+    //            .map(this::updateBasketCountAndSumm)
+                .map(basketProductReadMapper::map)
+                .orElseThrow();
     }
+
 
 
 }
